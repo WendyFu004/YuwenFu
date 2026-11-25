@@ -1,12 +1,12 @@
 window.SITE = {
   "site": {
     "title": "Yuwen Fu",
-    "description": "Technical Artist — portfolio, resume and notes on my work and personal projects.",
-    "footer": "Technical Artist · Montréal"
+    "description": "Senior Technical Artist — portfolio, resume and notes on my work and personal projects.",
+    "footer": "Senior Technical Artist · Montréal"
   },
   "profile": {
     "name": "Yuwen Fu",
-    "title": "Technical Artist",
+    "title": "Senior Technical Artist",
     "tagline": "Senior Technical Artist",
     "avatar": "",
     "location": "Montréal, QC",
@@ -38,7 +38,7 @@ window.SITE = {
     ]
   },
   "resume": {
-    "summary": "Technical Artist with production experience on live AAA titles at Ubisoft Montréal, specialized in character pipelines, technical validation, performance optimization and production tools — with a software engineering background in C#, C++, Python and SQL.",
+    "summary": "Senior Technical Artist with production experience on live AAA titles at Ubisoft Montréal, specialized in character pipelines, technical validation, performance optimization and production tools — with a software engineering background in C#, C++, Python and SQL.",
     "experience": [
       {
         "role": "Senior Technical Artist",
