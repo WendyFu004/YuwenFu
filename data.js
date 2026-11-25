@@ -1,13 +1,13 @@
 window.SITE = {
   "site": {
     "title": "Yuwen Fu",
-    "description": "Technical Artist — portfolio, résumé and notes on my work and personal projects.",
+    "description": "Technical Artist — portfolio, resume and notes on my work and personal projects.",
     "footer": "Technical Artist · Montréal"
   },
   "profile": {
     "name": "Yuwen Fu",
     "title": "Technical Artist",
-    "tagline": "Technical Artist at Ubisoft Montréal — character pipelines, tools and in-game performance.",
+    "tagline": "Senior Technical Artist",
     "avatar": "",
     "location": "Montréal, QC",
     "email": "fuyuwendy@gmail.com",
@@ -15,17 +15,33 @@ window.SITE = {
     "showPhone": false,
     "about": "Hi, I'm **Yuwen** — a Technical Artist at **Ubisoft Montréal**, currently on **For Honor**.\n\nI sit between artists and engineers: I own the character pipeline from concept to final in-game validation, maintain the customization (MTX) expression system, review and optimize seasonal event maps, and build tools and scripts that make production smoother for the team.\n\nBefore that I validated and integrated character assets in Unity for **Roller Champions**, and worked as a software engineering intern on a PostgreSQL database system. I studied Computer Science (Computer Games) at **Concordia University** and 3D Advanced Computer Graphics at **TheStar College**.\n\nThis site collects my work, personal projects and technical notes.",
     "socials": [
-      { "type": "artstation", "label": "ArtStation", "url": "https://wendyfu1.artstation.com/" },
-      { "type": "email", "label": "Email", "url": "mailto:fuyuwendy@gmail.com" },
-      { "type": "linkedin", "label": "LinkedIn", "url": "" },
-      { "type": "github", "label": "GitHub", "url": "" }
+      {
+        "type": "artstation",
+        "label": "ArtStation",
+        "url": "https://wendyfu1.artstation.com/"
+      },
+      {
+        "type": "email",
+        "label": "Email",
+        "url": "mailto:fuyuwendy@gmail.com"
+      },
+      {
+        "type": "linkedin",
+        "label": "LinkedIn",
+        "url": ""
+      },
+      {
+        "type": "github",
+        "label": "GitHub",
+        "url": ""
+      }
     ]
   },
   "resume": {
     "summary": "Technical Artist with production experience on live AAA titles at Ubisoft Montréal, specialized in character pipelines, technical validation, performance optimization and production tools — with a software engineering background in C#, C++, Python and SQL.",
     "experience": [
       {
-        "role": "Technical Artist",
+        "role": "Senior Technical Artist",
         "org": "Ubisoft",
         "place": "Montréal, QC",
         "start": "July 2022",
@@ -77,9 +93,18 @@ window.SITE = {
         "title": "Unity Applications — AI Race, AR & VR Demos",
         "period": "Sep 2020 – Sep 2022",
         "links": [
-          { "label": "3D AI Race Demo", "url": "https://drive.google.com/file/d/1zInK7OWcIODfY4pLpxi5t9i2F09PTjB0/view?usp=sharing" },
-          { "label": "AR Demo", "url": "https://youtube.com/shorts/TuxqPowOQ20" },
-          { "label": "VR Demo", "url": "https://youtu.be/XgzmbaefqVMx" }
+          {
+            "label": "3D AI Race Demo",
+            "url": "https://drive.google.com/file/d/1zInK7OWcIODfY4pLpxi5t9i2F09PTjB0/view?usp=sharing"
+          },
+          {
+            "label": "AR Demo",
+            "url": "https://youtube.com/shorts/TuxqPowOQ20"
+          },
+          {
+            "label": "VR Demo",
+            "url": "https://youtu.be/XgzmbaefqVMx"
+          }
         ],
         "bullets": [
           "Advanced game design and programming, including AI management and AI NPC behaviors",
@@ -107,11 +132,44 @@ window.SITE = {
       }
     ],
     "skills": [
-      { "group": "Software", "items": ["Unity", "Unreal", "3ds Max", "Maya", "ZBrush", "Substance", "Photoshop", "Marvelous Designer", "Perforce", "Jira", "Miro"] },
-      { "group": "Programming", "items": ["C#", "C++", "C", "Python", "MaxScript", "Java", "SQL", "OpenGL", "HTML", "CSS", "Linux development"] }
+      {
+        "group": "Software",
+        "items": [
+          "Unity",
+          "Unreal",
+          "3ds Max",
+          "Maya",
+          "ZBrush",
+          "Substance",
+          "Photoshop",
+          "Marvelous Designer",
+          "Perforce",
+          "Jira",
+          "Miro"
+        ]
+      },
+      {
+        "group": "Programming",
+        "items": [
+          "C#",
+          "C++",
+          "C",
+          "Python",
+          "MaxScript",
+          "Java",
+          "SQL",
+          "OpenGL",
+          "HTML",
+          "CSS",
+          "Linux development"
+        ]
+      }
     ],
     "awards": [
-      { "title": "Ubisoft Game Creators Odyssey — Act 1 & 2 Game Certificate", "date": "Mar 2021" }
+      {
+        "title": "Ubisoft Game Creators Odyssey — Act 1 & 2 Game Certificate",
+        "date": "Mar 2021"
+      }
     ]
   },
   "posts": [
@@ -121,7 +179,12 @@ window.SITE = {
       "date": "2023-02-01",
       "updated": "",
       "category": "Work",
-      "tags": ["For Honor", "Character Pipeline", "Optimization", "Tools"],
+      "tags": [
+        "For Honor",
+        "Character Pipeline",
+        "Optimization",
+        "Tools"
+      ],
       "cover": "",
       "pinned": true,
       "summary": "Owning the character pipeline as the team's sole tech artist: validation, the MTX customization system, seasonal map reviews and production tools.",
@@ -133,7 +196,12 @@ window.SITE = {
       "date": "2022-07-01",
       "updated": "",
       "category": "Work",
-      "tags": ["Roller Champions", "Unity", "Validation", "Performance"],
+      "tags": [
+        "Roller Champions",
+        "Unity",
+        "Validation",
+        "Performance"
+      ],
       "cover": "",
       "pinned": false,
       "summary": "Art technical validation for the Character team, Unity integration and performance analysis.",
@@ -145,7 +213,12 @@ window.SITE = {
       "date": "2022-09-01",
       "updated": "",
       "category": "Personal Projects",
-      "tags": ["Unity", "AR", "VR", "C#"],
+      "tags": [
+        "Unity",
+        "AR",
+        "VR",
+        "C#"
+      ],
       "cover": "",
       "pinned": false,
       "summary": "An Android AR app built with ARCore and an Oculus VR interaction scene.",
@@ -157,7 +230,12 @@ window.SITE = {
       "date": "2022-08-01",
       "updated": "",
       "category": "Personal Projects",
-      "tags": ["Unity", "AI", "Game Design", "C#"],
+      "tags": [
+        "Unity",
+        "AI",
+        "Game Design",
+        "C#"
+      ],
       "cover": "",
       "pinned": false,
       "summary": "A Unity racing demo with AI management and AI NPC behaviors.",
@@ -169,7 +247,11 @@ window.SITE = {
       "date": "2021-02-24",
       "updated": "",
       "category": "Software Engineering",
-      "tags": ["PostgreSQL", "SQL", "Linux"],
+      "tags": [
+        "PostgreSQL",
+        "SQL",
+        "Linux"
+      ],
       "cover": "",
       "pinned": false,
       "summary": "A technical blog post written during my internship: why logical replication, and a step-by-step setup.",
