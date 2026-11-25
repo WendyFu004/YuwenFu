@@ -1,212 +1,179 @@
-/* ==========================================================================
-   EDIT THIS FILE — all site content lives here.
-   Everything below is placeholder content. Replace it with your own.
-   ========================================================================== */
-
 window.SITE = {
-  name: "Alex Morgan",
-  initials: "AM",
-  role: "Gameplay & Tools Engineer",
-  location: "Montréal, Canada",
-  email: "alex.morgan@example.com",
-  phone: "+1 (555) 010-2030",
-  website: "alexmorgan.github.io",
-  available: true, // shows the "open to opportunities" badge
-  tagline:
-    "I build the systems that make games feel good — combat, animation pipelines, and the tools that help teams ship them.",
-  bio: [
-    "I'm a software engineer with eight years of experience across gameplay programming, engine tooling, and production pipelines. I enjoy the space where engineering meets feel: tuning a hit-reaction until it lands, or shaving minutes off a designer's iteration loop.",
-    "Outside of work I prototype small games, write about technical design, and contribute to open-source tools. I care about clear code, kind code reviews, and leaving systems better documented than I found them.",
-  ],
-  facts: [
-    ["Based in", "Montréal, Canada"],
-    ["Experience", "8+ years"],
-    ["Focus", "Gameplay · Tools · Pipelines"],
-    ["Languages", "English, French"],
-  ],
-  stats: [
-    { value: 8, suffix: "+", label: "Years shipping" },
-    { value: 5, suffix: "", label: "Titles released" },
-    { value: 40, suffix: "+", label: "Tools built" },
-  ],
-  socials: [
-    { label: "GitHub", url: "https://github.com/" },
-    { label: "LinkedIn", url: "https://www.linkedin.com/" },
-    { label: "Email", url: "mailto:alex.morgan@example.com" },
-  ],
-  resumePdf: "", // optional: path to a PDF, e.g. "assets/resume.pdf". Empty = use browser print.
-
-  experience: [
+  "site": {
+    "title": "Yuwen Fu",
+    "description": "Technical Artist — portfolio, résumé and notes on my work and personal projects.",
+    "footer": "Technical Artist · Montréal"
+  },
+  "profile": {
+    "name": "Yuwen Fu",
+    "title": "Technical Artist",
+    "tagline": "Technical Artist at Ubisoft Montréal — character pipelines, tools and in-game performance.",
+    "avatar": "",
+    "location": "Montréal, QC",
+    "email": "fuyuwendy@gmail.com",
+    "phone": "514-885-6952",
+    "showPhone": false,
+    "about": "Hi, I'm **Yuwen** — a Technical Artist at **Ubisoft Montréal**, currently on **For Honor**.\n\nI sit between artists and engineers: I own the character pipeline from concept to final in-game validation, maintain the customization (MTX) expression system, review and optimize seasonal event maps, and build tools and scripts that make production smoother for the team.\n\nBefore that I validated and integrated character assets in Unity for **Roller Champions**, and worked as a software engineering intern on a PostgreSQL database system. I studied Computer Science (Computer Games) at **Concordia University** and 3D Advanced Computer Graphics at **TheStar College**.\n\nThis site collects my work, personal projects and technical notes.",
+    "socials": [
+      { "type": "artstation", "label": "ArtStation", "url": "https://wendyfu1.artstation.com/" },
+      { "type": "email", "label": "Email", "url": "mailto:fuyuwendy@gmail.com" },
+      { "type": "linkedin", "label": "LinkedIn", "url": "" },
+      { "type": "github", "label": "GitHub", "url": "" }
+    ]
+  },
+  "resume": {
+    "summary": "Technical Artist with production experience on live AAA titles at Ubisoft Montréal, specialized in character pipelines, technical validation, performance optimization and production tools — with a software engineering background in C#, C++, Python and SQL.",
+    "experience": [
+      {
+        "role": "Technical Artist",
+        "org": "Ubisoft",
+        "place": "Montréal, QC",
+        "start": "July 2022",
+        "end": "Present",
+        "sections": [
+          {
+            "heading": "For Honor",
+            "period": "February 2023 – Present",
+            "bullets": [
+              "Technical Artist for the character pipeline, managing the full production cycle from concept to final in-game validation as the sole tech artist on the team, responsible for validating and reviewing overall asset production in game",
+              "Maintained the custom expression system for MTX content, including dynamic armor color changes, paint pattern applications and a modular ornament equipment system; managed all character-related assets in game",
+              "Expanded role to support the Events team (Map team) with map realization, conducting technical reviews and performance optimization for seasonal event maps",
+              "Created and maintained production tools and scripts, collaborating with tool programmers and developing independent solutions — for example a Photoshop JavaScript tool for streamlined texture artist workflows",
+              "Collaborated across departments (level art, lighting, props, character and level design) to support world-building and the content creation pipeline, focusing on performance optimization and technical validation",
+              "Trained and mentored team members in tools, pipelines and production methods while creating technical documentation and training materials"
+            ]
+          },
+          {
+            "heading": "Roller Champions",
+            "period": "July 2022 – February 2023",
+            "bullets": [
+              "Conducted art technical validation for Character team assets, ensuring adherence to guidelines and technical standards, and cooperated with artists to efficiently produce qualified art assets for production",
+              "Integrated assets in the Unity engine and performed performance analysis to maintain optimal game performance"
+            ]
+          }
+        ]
+      },
+      {
+        "role": "Junior Software Engineer Intern",
+        "org": "Hornetlabs Technology Inc.",
+        "place": "Surrey, BC",
+        "start": "Jan 2021",
+        "end": "June 2021",
+        "sections": [
+          {
+            "heading": "",
+            "period": "",
+            "bullets": [
+              "Designed, coded and debugged a PostgreSQL database system on Linux with C and SQL",
+              "Managed Jira workflows, performing bug fixes, code analysis and requirement reviews for software optimization",
+              "Supported, maintained and documented company software functionality — [my PostgreSQL development blog](https://www.highgo.ca/2021/02/24/postgresql-logical-replication-advantage-and-step-by-step-set-up/)"
+            ]
+          }
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "title": "Unity Applications — AI Race, AR & VR Demos",
+        "period": "Sep 2020 – Sep 2022",
+        "links": [
+          { "label": "3D AI Race Demo", "url": "https://drive.google.com/file/d/1zInK7OWcIODfY4pLpxi5t9i2F09PTjB0/view?usp=sharing" },
+          { "label": "AR Demo", "url": "https://youtube.com/shorts/TuxqPowOQ20" },
+          { "label": "VR Demo", "url": "https://youtu.be/XgzmbaefqVMx" }
+        ],
+        "bullets": [
+          "Advanced game design and programming, including AI management and AI NPC behaviors",
+          "Android AR application using the ARCore package: spawning 3D objects on any detected flat surface, with move, rotate and scale manipulation",
+          "VR scene using the Oculus XR plugin: interacting with models through VR hands, with continuous movement and destination-preview teleportation"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "degree": "Bachelor of Computer Science — Computer Games",
+        "school": "Concordia University",
+        "place": "Montréal, QC",
+        "start": "Sep 2017",
+        "end": "May 2022",
+        "notes": []
+      },
+      {
+        "degree": "Diploma — 3D Advanced Computer Graphics",
+        "school": "TheStar College",
+        "place": "Montréal, QC",
+        "start": "June 2019",
+        "end": "April 2020",
+        "notes": []
+      }
+    ],
+    "skills": [
+      { "group": "Software", "items": ["Unity", "Unreal", "3ds Max", "Maya", "ZBrush", "Substance", "Photoshop", "Marvelous Designer", "Perforce", "Jira", "Miro"] },
+      { "group": "Programming", "items": ["C#", "C++", "C", "Python", "MaxScript", "Java", "SQL", "OpenGL", "HTML", "CSS", "Linux development"] }
+    ],
+    "awards": [
+      { "title": "Ubisoft Game Creators Odyssey — Act 1 & 2 Game Certificate", "date": "Mar 2021" }
+    ]
+  },
+  "posts": [
     {
-      role: "Senior Gameplay Programmer",
-      org: "Northwind Interactive",
-      place: "Montréal",
-      start: "2022",
-      end: "Present",
-      summary: "Lead programmer for the melee combat feature team on a live-service action title.",
-      highlights: [
-        "Redesigned the hit-reaction system, cutting animation-related bug reports by 45%.",
-        "Built a data-driven move-set editor used daily by 12 designers.",
-        "Mentored 4 junior programmers; introduced a weekly code-review clinic.",
-      ],
-      tags: ["C++", "Animation", "Live Ops"],
+      "id": "for-honor-character-tech-art",
+      "title": "For Honor — Character Technical Art",
+      "date": "2023-02-01",
+      "updated": "",
+      "category": "Work",
+      "tags": ["For Honor", "Character Pipeline", "Optimization", "Tools"],
+      "cover": "",
+      "pinned": true,
+      "summary": "Owning the character pipeline as the team's sole tech artist: validation, the MTX customization system, seasonal map reviews and production tools.",
+      "body": "## Role\n\nI'm the Technical Artist for the character pipeline on **For Honor**, managing the full production cycle from concept to final in-game validation as the sole tech artist on the team.\n\n## Character customization (MTX)\n\nI maintain the custom expression system behind MTX content:\n\n- Dynamic armor color changes\n- Paint pattern applications\n- A modular ornament equipment system\n\n## Seasonal event maps\n\nI also support the Events (Map) team with technical reviews and performance optimization for seasonal event maps.\n\n## Tools\n\nI build and maintain production tools and scripts — for example a **Photoshop JavaScript tool** that streamlines texture artists' workflows.\n\n> ✏️ Open the editor (`?edit`) to add screenshots, breakdowns or videos here."
     },
     {
-      role: "Tools Programmer",
-      org: "Bluefjord Studios",
-      place: "Québec City",
-      start: "2019",
-      end: "2022",
-      summary: "Owned editor tooling and content-validation pipelines for two shipped titles.",
-      highlights: [
-        "Created an asset validation service that blocked 3,000+ broken submissions pre-commit.",
-        "Reduced level-load iteration time from 4 minutes to 40 seconds.",
-        "Shipped a Python plugin framework adopted by three other teams.",
-      ],
-      tags: ["C#", "Python", "Pipelines"],
+      "id": "roller-champions-asset-validation",
+      "title": "Roller Champions — Character Asset Validation",
+      "date": "2022-07-01",
+      "updated": "",
+      "category": "Work",
+      "tags": ["Roller Champions", "Unity", "Validation", "Performance"],
+      "cover": "",
+      "pinned": false,
+      "summary": "Art technical validation for the Character team, Unity integration and performance analysis.",
+      "body": "## Overview\n\nOn **Roller Champions** I conducted art technical validation for Character team assets, making sure they met guidelines and technical standards, and worked with artists to produce production-ready assets efficiently.\n\n## Integration & performance\n\nI integrated assets into **Unity** and ran performance analysis to keep the game running optimally.\n\n> ✏️ Add images or a breakdown of the validation process in the editor."
     },
     {
-      role: "Junior Programmer",
-      org: "Pixel Harbor",
-      place: "Montréal",
-      start: "2017",
-      end: "2019",
-      summary: "Generalist programmer on a mobile and console puzzle-adventure game.",
-      highlights: [
-        "Implemented the save system and cloud sync across 3 platforms.",
-        "Wrote the UI framework later reused for the studio's next title.",
-      ],
-      tags: ["Unity", "C#", "UI"],
-    },
-  ],
-
-  education: [
-    {
-      role: "B.Sc. Computer Science",
-      org: "Université de Montréal",
-      place: "Montréal",
-      start: "2013",
-      end: "2017",
-      summary: "Specialization in computer graphics and interactive systems.",
-      highlights: ["Dean's list, 2015–2017", "Capstone: real-time cloth simulation on GPU"],
-      tags: ["Graphics", "Algorithms"],
-    },
-  ],
-
-  skills: [
-    {
-      group: "Languages",
-      items: [
-        ["C++", 95],
-        ["C#", 85],
-        ["Python", 85],
-        ["HLSL", 60],
-      ],
+      "id": "unity-ar-vr-demos",
+      "title": "AR & VR Demos in Unity",
+      "date": "2022-09-01",
+      "updated": "",
+      "category": "Personal Projects",
+      "tags": ["Unity", "AR", "VR", "C#"],
+      "cover": "",
+      "pinned": false,
+      "summary": "An Android AR app built with ARCore and an Oculus VR interaction scene.",
+      "body": "## AR Demo — ARCore\n\nA Unity application for Android using the **ARCore** package. It spawns 3D objects on any detected flat surface and supports move, rotate and scale manipulation.\n\nhttps://youtube.com/shorts/TuxqPowOQ20\n\n## VR Demo — Oculus XR\n\nA Unity 3D scene using the **Oculus XR plugin**. The player interacts with models using VR hands and moves in two modes: continuous movement and teleportation with a destination preview.\n\n[Watch the VR demo](https://youtu.be/XgzmbaefqVMx)"
     },
     {
-      group: "Engines & Tools",
-      items: [
-        ["Proprietary engines", 90],
-        ["Unreal Engine", 75],
-        ["Unity", 80],
-        ["Perforce / Git", 90],
-      ],
+      "id": "unity-3d-ai-race",
+      "title": "3D AI Race Demo",
+      "date": "2022-08-01",
+      "updated": "",
+      "category": "Personal Projects",
+      "tags": ["Unity", "AI", "Game Design", "C#"],
+      "cover": "",
+      "pinned": false,
+      "summary": "A Unity racing demo with AI management and AI NPC behaviors.",
+      "body": "## Overview\n\nA racing game demo built in **Unity**, focused on game design and programming — including AI management and AI-driven NPC behaviors.\n\n[▶ Watch the demo video](https://drive.google.com/file/d/1zInK7OWcIODfY4pLpxi5t9i2F09PTjB0/view?usp=sharing)"
     },
     {
-      group: "Disciplines",
-      items: [
-        ["Gameplay systems", 95],
-        ["Tools & pipelines", 90],
-        ["Animation tech", 80],
-        ["Performance profiling", 75],
-      ],
-    },
-  ],
-
-  certifications: ["Certified ScrumMaster (2021)", "GDC Speaker — Tools Summit (2023)"],
-
-  /* Portfolio — `cover` is a 2-colour gradient; set `image` to a path to use a picture instead. */
-  projects: [
-    {
-      title: "Parry Window Visualizer",
-      year: "2024",
-      category: "Tools",
-      cover: ["#e4572e", "#2b2d42"],
-      image: "",
-      blurb: "In-editor debug overlay that shows timing windows for every combat action, live.",
-      details:
-        "Designers struggled to reason about frame-tight defensive windows. This overlay renders each action's active, recovery, and parry frames on a scrubbable timeline next to the character, with per-frame hitbox snapshots. It became the default way the team discussed combat balance.",
-      role: "Sole developer",
-      stack: ["C++", "ImGui", "Engine debug draw"],
-      links: [{ label: "Case study", url: "#" }],
-    },
-    {
-      title: "Momentum",
-      year: "2023",
-      category: "Games",
-      cover: ["#3a86ff", "#0b132b"],
-      image: "",
-      blurb: "A 48-hour game-jam platformer about conserving speed. Top 5% overall.",
-      details:
-        "Built in a weekend with two friends. I wrote the movement controller, which uses a custom slope-aware solver so speed is never silently lost. Placed in the top 5% of 3,000 entries.",
-      role: "Programmer",
-      stack: ["Unity", "C#"],
-      links: [
-        { label: "Play", url: "#" },
-        { label: "Source", url: "#" },
-      ],
-    },
-    {
-      title: "AssetGuard",
-      year: "2021",
-      category: "Pipelines",
-      cover: ["#06d6a0", "#073b4c"],
-      image: "",
-      blurb: "Pre-submit validation service that catches broken assets before they land.",
-      details:
-        "A rule engine with 120+ checks (naming, texture budgets, missing references) running as a Perforce trigger and in the editor. Rules are written in Python and hot-reloaded, so tech artists can add their own without a programmer.",
-      role: "Lead developer",
-      stack: ["Python", "Perforce triggers", "C# editor plugin"],
-      links: [{ label: "Write-up", url: "#" }],
-    },
-    {
-      title: "Animation Retarget Batcher",
-      year: "2020",
-      category: "Tools",
-      cover: ["#ffbe0b", "#5f0f40"],
-      image: "",
-      blurb: "Batch retargeting tool that processes hundreds of clips across rigs overnight.",
-      details:
-        "Replaced a manual, click-heavy workflow with a queue-based batch tool and an HTML report of every clip with warnings. Saved the animation team roughly two days per milestone.",
-      role: "Developer",
-      stack: ["Python", "Qt", "MotionBuilder"],
-      links: [],
-    },
-    {
-      title: "Tiny Raytracer",
-      year: "2018",
-      category: "Open Source",
-      cover: ["#8338ec", "#14213d"],
-      image: "",
-      blurb: "A readable, 1,500-line path tracer written as a teaching resource.",
-      details:
-        "Physically based path tracer with BVH acceleration, importance sampling, and a step-by-step companion article. Used in two university graphics courses.",
-      role: "Author",
-      stack: ["C++17", "OpenMP"],
-      links: [{ label: "GitHub", url: "#" }],
-    },
-    {
-      title: "Lantern Keeper",
-      year: "2017",
-      category: "Games",
-      cover: ["#fb5607", "#1b1b1e"],
-      image: "",
-      blurb: "Student puzzle game about light and shadow, shown at a local indie showcase.",
-      details:
-        "Capstone side-project. Light sources cast real-time 2D shadows that become solid platforms. I built the shadow-geometry system and the level editor.",
-      role: "Programmer & designer",
-      stack: ["C#", "MonoGame"],
-      links: [{ label: "Trailer", url: "#" }],
-    },
-  ],
+      "id": "postgresql-logical-replication",
+      "title": "PostgreSQL Logical Replication — Advantages & Setup",
+      "date": "2021-02-24",
+      "updated": "",
+      "category": "Software Engineering",
+      "tags": ["PostgreSQL", "SQL", "Linux"],
+      "cover": "",
+      "pinned": false,
+      "summary": "A technical blog post written during my internship: why logical replication, and a step-by-step setup.",
+      "body": "During my internship at Hornetlabs Technology I designed, coded and debugged a PostgreSQL database system on Linux with C and SQL, and wrote technical articles about it.\n\n[Read the article on highgo.ca →](https://www.highgo.ca/2021/02/24/postgresql-logical-replication-advantage-and-step-by-step-set-up/)"
+    }
+  ]
 };
