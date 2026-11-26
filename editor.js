@@ -94,23 +94,36 @@
       },
     ],
     resume: [
-      { key: "summary", label: "Summary", type: "textarea", rows: 4 },
+      { type: "heading", label: "PDF downloads · PDF 下载", hint: "Upload your own PDF for each language. If a slot is empty, the download button prints the Document view in that language instead (browser → Save as PDF)." },
+      { key: "pdf", label: "English PDF", type: "file", accept: "application/pdf", prefix: "resume-en", half: true },
+      { key: "pdf_zh", label: "中文 PDF", type: "file", accept: "application/pdf", prefix: "resume-zh", half: true },
+      { type: "heading", label: "Content · 内容", hint: "Each field has a Chinese twin (· 中文) shown to visitors who pick 中文. Empty Chinese fields fall back to English." },
+      { key: "summary", label: "Summary", type: "textarea", rows: 4, half: true },
+      { key: "summary_zh", label: "Summary · 中文", type: "textarea", rows: 4, half: true },
       {
         key: "experience", label: "Experience", type: "list", itemLabel: (e) => `${e.role || "Role"} — ${e.org || ""}`,
-        blank: () => ({ role: "", org: "", place: "", start: "", end: "Present", sections: [{ heading: "", period: "", bullets: [] }] }),
+        blank: () => ({ role: "", org: "", place: "", start: "", end: "Present", end_zh: "至今", sections: [{ heading: "", period: "", bullets: [] }] }),
         fields: [
-          { key: "role", label: "Role" },
-          { key: "org", label: "Company" },
-          { key: "place", label: "Location" },
+          { key: "role", label: "Role", half: true },
+          { key: "role_zh", label: "Role · 中文", half: true },
+          { key: "org", label: "Company", half: true },
+          { key: "org_zh", label: "Company · 中文", half: true },
+          { key: "place", label: "Location", half: true },
+          { key: "place_zh", label: "Location · 中文", half: true },
           { key: "start", label: "Start", hint: "e.g. July 2022", half: true },
+          { key: "start_zh", label: "Start · 中文", hint: "例如 2022年7月", half: true },
           { key: "end", label: "End", hint: "e.g. Present", half: true },
+          { key: "end_zh", label: "End · 中文", hint: "例如 至今", half: true },
           {
             key: "sections", label: "Projects / sections", type: "list", itemLabel: (s) => s.heading || "(no heading)",
             blank: () => ({ heading: "", period: "", bullets: [] }),
             fields: [
-              { key: "heading", label: "Heading (e.g. game title)", hint: "Optional" },
-              { key: "period", label: "Period", hint: "Optional" },
+              { key: "heading", label: "Heading (e.g. game title)", hint: "Optional", half: true },
+              { key: "heading_zh", label: "Heading · 中文", half: true },
+              { key: "period", label: "Period", hint: "Optional", half: true },
+              { key: "period_zh", label: "Period · 中文", half: true },
               { key: "bullets", label: "Bullet points", type: "lines", rows: 6, hint: "One per line. [text](url) for links." },
+              { key: "bullets_zh", label: "Bullet points · 中文", type: "lines", rows: 6, hint: "每行一条，与上面的英文一一对应。" },
             ],
           },
         ],
@@ -119,33 +132,42 @@
         key: "projects", label: "Projects", type: "list", itemLabel: (p) => p.title || "Project",
         blank: () => ({ title: "", period: "", links: [], bullets: [] }),
         fields: [
-          { key: "title", label: "Title" },
-          { key: "period", label: "Period" },
+          { key: "title", label: "Title", half: true },
+          { key: "title_zh", label: "Title · 中文", half: true },
+          { key: "period", label: "Period", half: true },
+          { key: "period_zh", label: "Period · 中文", half: true },
           { key: "bullets", label: "Bullet points", type: "lines", rows: 5 },
-          { key: "links", label: "Links", type: "list", itemLabel: (l) => l.label || "Link", blank: () => ({ label: "", url: "" }), fields: [{ key: "label", label: "Label" }, { key: "url", label: "URL" }] },
+          { key: "bullets_zh", label: "Bullet points · 中文", type: "lines", rows: 5 },
+          { key: "links", label: "Links", type: "list", itemLabel: (l) => l.label || "Link", blank: () => ({ label: "", url: "" }), fields: [{ key: "label", label: "Label", half: true }, { key: "label_zh", label: "Label · 中文", half: true }, { key: "url", label: "URL" }] },
         ],
       },
       {
         key: "education", label: "Education", type: "list", itemLabel: (e) => e.degree || "Degree",
         blank: () => ({ degree: "", school: "", place: "", start: "", end: "", notes: [] }),
         fields: [
-          { key: "degree", label: "Degree" },
-          { key: "school", label: "School" },
-          { key: "place", label: "Location" },
+          { key: "degree", label: "Degree", half: true },
+          { key: "degree_zh", label: "Degree · 中文", half: true },
+          { key: "school", label: "School", half: true },
+          { key: "school_zh", label: "School · 中文", half: true },
+          { key: "place", label: "Location", half: true },
+          { key: "place_zh", label: "Location · 中文", half: true },
           { key: "start", label: "Start", half: true },
+          { key: "start_zh", label: "Start · 中文", half: true },
           { key: "end", label: "End", half: true },
+          { key: "end_zh", label: "End · 中文", half: true },
           { key: "notes", label: "Notes", type: "lines", rows: 3 },
+          { key: "notes_zh", label: "Notes · 中文", type: "lines", rows: 3 },
         ],
       },
       {
         key: "skills", label: "Skill groups", type: "list", itemLabel: (g) => g.group || "Group",
         blank: () => ({ group: "", items: [] }),
-        fields: [{ key: "group", label: "Group name" }, { key: "items", label: "Skills", type: "tags", hint: "Comma separated" }],
+        fields: [{ key: "group", label: "Group name", half: true }, { key: "group_zh", label: "Group name · 中文", half: true }, { key: "items", label: "Skills", type: "tags", hint: "Comma separated" }],
       },
       {
         key: "awards", label: "Awards", type: "list", itemLabel: (a) => a.title || "Award",
         blank: () => ({ title: "", date: "" }),
-        fields: [{ key: "title", label: "Title" }, { key: "date", label: "Date" }],
+        fields: [{ key: "title", label: "Title", half: true }, { key: "title_zh", label: "Title · 中文", half: true }, { key: "date", label: "Date", half: true }, { key: "date_zh", label: "Date · 中文", half: true }],
       },
     ],
     post: [
@@ -203,6 +225,7 @@
       return el;
     }
     if (type === "image") return imageField(f, obj, set, hint, ctx);
+    if (type === "file") return fileField(f, obj, set, hint);
 
     let input;
     if (type === "select") {
@@ -283,6 +306,32 @@
         if (path) { set(path); draw(); }
       };
       $("input[type=text]", el).onchange = (e) => { set(e.target.value.trim()); draw(); };
+      const c = $("[data-clear]", el);
+      if (c) c.onclick = () => { set(""); draw(); };
+    };
+    draw();
+    return el;
+  }
+
+  function fileField(f, obj, set, hint) {
+    const el = document.createElement("div");
+    el.className = `ed-field t-file${f.half ? " half" : ""}`;
+    const draw = () => {
+      const v = obj[f.key] || "";
+      el.innerHTML = `<span class="ed-label">${esc(f.label)}</span>
+        <div class="ed-file">
+          <span class="ed-file-name">${v ? `📄 <a href="${esc(App.asset(v))}" target="_blank" rel="noopener">${esc(v.split("/").pop())}</a>` : "<i>No file — download prints the page</i>"}</span>
+          <div class="ed-img-tools">
+            <label class="ed-btn small">${v ? "Replace…" : "Upload…"}<input type="file" accept="${esc(f.accept || "*/*")}" hidden/></label>
+            ${v ? `<button type="button" class="ed-btn small ghost" data-clear>Remove</button>` : ""}
+          </div>
+        </div>${hint}`;
+      $("input[type=file]", el).onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const path = await addUpload(file, f.prefix);
+        if (path) { set(path); draw(); }
+      };
       const c = $("[data-clear]", el);
       if (c) c.onclick = () => { set(""); draw(); };
     };
@@ -496,7 +545,7 @@
     $("#ed-cats").innerHTML = [...new Set(data.posts.map((p) => p.category).filter(Boolean))].map((c) => `<option value="${esc(c)}">`).join("");
     if (currentTab === "posts") editingPost ? drawPost(editingPost) : drawPosts();
     if (currentTab === "profile") { body.appendChild(intro("Your name, photo, contact and the About page.")); body.appendChild(build(SCHEMA.profile, data.profile, () => changed())); go("#/about"); }
-    if (currentTab === "resume") { body.appendChild(intro("Everything on the Resume page and the printable PDF. Resume content is shown in English in both languages.")); body.appendChild(build(SCHEMA.resume, data.resume, () => changed())); go("#/resume"); }
+    if (currentTab === "resume") { body.appendChild(intro("Everything on the Resume page and the PDF downloads. Fields marked · 中文 are shown to visitors who pick 中文.")); body.appendChild(build(SCHEMA.resume, data.resume, () => changed())); go("#/resume"); }
     if (currentTab === "site") { body.appendChild(intro("Site-wide settings.")); body.appendChild(build(SCHEMA.site, data.site, () => changed())); drawDataTools(); }
     if (currentTab === "publish") drawPublishSettings();
     requestAnimationFrame(() => fitAll());

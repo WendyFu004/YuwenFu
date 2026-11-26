@@ -49,18 +49,28 @@ window.SITE = {
     ]
   },
   "resume": {
+    "pdf": "",
+    "pdf_zh": "assets/resume-zh.pdf",
     "summary": "Senior Technical Artist with production experience on live AAA titles at Ubisoft Montréal, specialized in character pipelines, technical validation, performance optimization and production tools — with a software engineering background in C#, C++, Python and SQL.",
+    "summary_zh": "高级技术美术，在育碧蒙特利尔参与在线运营 3A 游戏的生产，专注于角色管线、技术验证、性能优化和生产工具开发，并具备 C#、C++、Python 和 SQL 的软件工程背景。",
     "experience": [
       {
         "role": "Senior Technical Artist",
+        "role_zh": "高级技术美术",
         "org": "Ubisoft",
+        "org_zh": "育碧（Ubisoft）",
         "place": "Montréal, QC",
+        "place_zh": "加拿大蒙特利尔",
         "start": "July 2022",
+        "start_zh": "2022年7月",
         "end": "Present",
+        "end_zh": "至今",
         "sections": [
           {
             "heading": "For Honor",
+            "heading_zh": "《荣耀战魂》（For Honor）",
             "period": "February 2023 – Present",
+            "period_zh": "2023年2月 – 至今",
             "bullets": [
               "Technical Artist for the character pipeline, managing the full production cycle from concept to final in-game validation as the sole tech artist on the team, responsible for validating and reviewing overall asset production in game",
               "Maintained the custom expression system for MTX content, including dynamic armor color changes, paint pattern applications and a modular ornament equipment system; managed all character-related assets in game",
@@ -68,24 +78,42 @@ window.SITE = {
               "Created and maintained production tools and scripts, collaborating with tool programmers and developing independent solutions — for example a Photoshop JavaScript tool for streamlined texture artist workflows",
               "Collaborated across departments (level art, lighting, props, character and level design) to support world-building and the content creation pipeline, focusing on performance optimization and technical validation",
               "Trained and mentored team members in tools, pipelines and production methods while creating technical documentation and training materials"
+            ],
+            "bullets_zh": [
+              "担任角色管线技术美术，作为团队中唯一的技术美术，负责从概念到游戏内最终验收的完整生产流程，并负责游戏内整体资产产出的验证与审查",
+              "维护商城内容（MTX）的自定义表现系统，包括动态盔甲换色、涂装图案应用和模块化饰品装备系统；管理游戏内所有角色相关资产",
+              "职责扩展至支持活动组（地图组）的地图制作，为季节活动地图进行技术审查和性能优化",
+              "开发并维护生产工具和脚本，既与工具程序员协作，也独立开发解决方案——例如一个用于简化贴图美术工作流程的 Photoshop JavaScript 工具",
+              "与关卡美术、灯光、道具、角色和关卡设计等部门跨组协作，支持世界构建和内容制作管线，专注于性能优化与技术验证",
+              "为团队成员提供工具、管线和制作方法方面的培训与指导，并编写技术文档和培训资料"
             ]
           },
           {
             "heading": "Roller Champions",
+            "heading_zh": "《Roller Champions》",
             "period": "July 2022 – February 2023",
+            "period_zh": "2022年7月 – 2023年2月",
             "bullets": [
               "Conducted art technical validation for Character team assets, ensuring adherence to guidelines and technical standards, and cooperated with artists to efficiently produce qualified art assets for production",
               "Integrated assets in the Unity engine and performed performance analysis to maintain optimal game performance"
+            ],
+            "bullets_zh": [
+              "对角色组的资产进行美术技术验证，确保符合制作规范和技术标准，并与美术师协作，高效产出符合要求的美术资产",
+              "在 Unity 引擎中集成资产并进行性能分析，保证游戏性能处于最佳状态"
             ]
           }
         ]
       },
       {
         "role": "Junior Software Engineer Intern",
+        "role_zh": "初级软件工程师（实习）",
         "org": "Hornetlabs Technology Inc.",
         "place": "Surrey, BC",
+        "place_zh": "加拿大萨里",
         "start": "Jan 2021",
+        "start_zh": "2021年1月",
         "end": "June 2021",
+        "end_zh": "2021年6月",
         "sections": [
           {
             "heading": "",
@@ -94,6 +122,11 @@ window.SITE = {
               "Designed, coded and debugged a PostgreSQL database system on Linux with C and SQL",
               "Managed Jira workflows, performing bug fixes, code analysis and requirement reviews for software optimization",
               "Supported, maintained and documented company software functionality — [my PostgreSQL development blog](https://www.highgo.ca/2021/02/24/postgresql-logical-replication-advantage-and-step-by-step-set-up/)"
+            ],
+            "bullets_zh": [
+              "在 Linux 环境下使用 C 和 SQL 设计、编写并调试 PostgreSQL 数据库系统",
+              "管理 Jira 工作流，进行缺陷修复、代码分析和需求评审，以优化软件",
+              "支持和维护公司软件功能并编写文档——[我的 PostgreSQL 开发博客](https://www.highgo.ca/2021/02/24/postgresql-logical-replication-advantage-and-step-by-step-set-up/)"
             ]
           }
         ]
@@ -102,18 +135,23 @@ window.SITE = {
     "projects": [
       {
         "title": "Unity Applications — AI Race, AR & VR Demos",
+        "title_zh": "Unity 应用 —— AI 赛车、AR 与 VR 演示",
         "period": "Sep 2020 – Sep 2022",
+        "period_zh": "2020年9月 – 2022年9月",
         "links": [
           {
             "label": "3D AI Race Demo",
+            "label_zh": "3D AI 赛车演示",
             "url": "https://drive.google.com/file/d/1zInK7OWcIODfY4pLpxi5t9i2F09PTjB0/view?usp=sharing"
           },
           {
             "label": "AR Demo",
+            "label_zh": "AR 演示",
             "url": "https://youtube.com/shorts/TuxqPowOQ20"
           },
           {
             "label": "VR Demo",
+            "label_zh": "VR 演示",
             "url": "https://youtu.be/XgzmbaefqVMx"
           }
         ],
@@ -121,30 +159,45 @@ window.SITE = {
           "Advanced game design and programming, including AI management and AI NPC behaviors",
           "Android AR application using the ARCore package: spawning 3D objects on any detected flat surface, with move, rotate and scale manipulation",
           "VR scene using the Oculus XR plugin: interacting with models through VR hands, with continuous movement and destination-preview teleportation"
+        ],
+        "bullets_zh": [
+          "进阶游戏设计与编程，包括 AI 管理和 AI NPC 行为",
+          "基于 ARCore 的 Android AR 应用：在检测到的任意平面上生成 3D 物体，并支持移动、旋转和缩放操作",
+          "基于 Oculus XR 插件的 VR 场景：通过 VR 手部与模型交互，支持连续移动和带目的地预览的传送"
         ]
       }
     ],
     "education": [
       {
         "degree": "Bachelor of Computer Science — Computer Games",
+        "degree_zh": "计算机科学学士 —— 计算机游戏方向",
         "school": "Concordia University",
+        "school_zh": "康考迪亚大学（Concordia University）",
         "place": "Montréal, QC",
+        "place_zh": "加拿大蒙特利尔",
         "start": "Sep 2017",
+        "start_zh": "2017年9月",
         "end": "May 2022",
+        "end_zh": "2022年5月",
         "notes": []
       },
       {
         "degree": "Diploma — 3D Advanced Computer Graphics",
+        "degree_zh": "文凭 —— 3D 高级计算机图形",
         "school": "TheStar College",
         "place": "Montréal, QC",
+        "place_zh": "加拿大蒙特利尔",
         "start": "June 2019",
+        "start_zh": "2019年6月",
         "end": "April 2020",
+        "end_zh": "2020年4月",
         "notes": []
       }
     ],
     "skills": [
       {
         "group": "Software",
+        "group_zh": "软件",
         "items": [
           "Unity",
           "Unreal",
@@ -161,6 +214,7 @@ window.SITE = {
       },
       {
         "group": "Programming",
+        "group_zh": "编程",
         "items": [
           "C#",
           "C++",
@@ -179,7 +233,9 @@ window.SITE = {
     "awards": [
       {
         "title": "Ubisoft Game Creators Odyssey — Act 1 & 2 Game Certificate",
-        "date": "Mar 2021"
+        "title_zh": "育碧 Game Creators Odyssey —— 第一、二幕游戏证书",
+        "date": "Mar 2021",
+        "date_zh": "2021年3月"
       }
     ]
   },

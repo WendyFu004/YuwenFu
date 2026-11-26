@@ -31,7 +31,7 @@
       nPosts: (n) => `${n} 篇`,
       experience: "工作经历", projects: "项目", education: "教育背景", glance: "概览", now: "目前",
       titles: "参与项目", awards: "奖项", skills: "技能", interactive: "交互版", document: "文档版",
-      pdf: "下载 PDF", current: "至今", cvView: "简历视图",
+      pdf: "下载 PDF", current: "在职", cvView: "简历视图",
       onlyOther: "本文暂无中文版，以下为英文原文。", readIn: "阅读语言",
       videoOpen: (s) => `无法播放？在 ${s} 中打开 ↗`,
       dur: (y, m) => [y && `${y}年`, m && `${m}个月`].filter(Boolean).join(""),
@@ -393,21 +393,35 @@
   }
   const bullets = (arr) => (arr?.length ? `<ul>${arr.map((b) => `<li>${mdInline(b)}</li>`).join("")}</ul>` : "");
   let cvView = "interactive";
+  /* Uploaded résumé PDF for a language: resume.pdf (English) / resume.pdf_zh (Chinese). No cross-language fallback. */
+  const cvPdf = (lang) => String(App.data.resume?.[lang === "zh" ? "pdf_zh" : "pdf"] || "").trim();
+  const cvFileName = (lang) => `${App.data.profile.name || "Resume"} - ${lang === "zh" ? "简历" : "Resume"}.pdf`;
+  /* No uploaded file: print the Document view in that language (browser "Save as PDF"). */
+  function printResume(lang) {
+    const prev = App.lang, title = document.title;
+    if (lang !== prev) { App.lang = lang; route(true); }
+    document.title = cvFileName(lang).replace(/\.pdf$/, "");
+    print();
+    document.title = title;
+    if (lang !== prev) { App.lang = prev; route(true); }
+  }
 
   function resumeView() {
     const { profile: p, resume: r } = App.data;
     const exp = r.experience || [], edu = r.education || [], prj = r.projects || [];
+    const range = (e) => `${L(e, "start")} – ${L(e, "end")}`;
     const tl = (items, kind) => items.map((e, i) => {
-      const title = kind === "edu" ? e.degree : kind === "prj" ? e.title : e.role;
-      const org = kind === "edu" ? e.school : kind === "prj" ? "" : e.org;
-      const dates = kind === "prj" ? e.period : `${e.start || ""} – ${e.end || ""}`;
+      const title = L(e, kind === "edu" ? "degree" : kind === "prj" ? "title" : "role");
+      const org = kind === "prj" ? "" : L(e, kind === "edu" ? "school" : "org");
+      const place = L(e, "place");
+      const dates = kind === "prj" ? L(e, "period") : range(e);
       const dur = kind === "prj" ? "" : duration(e.start, e.end);
       const now = /present/i.test(e.end || "");
       let body = "";
       if (kind === "exp") body = (e.sections || []).map((s) => `
-          <div class="cv-sub">${s.heading ? `<div class="cv-sub-head"><strong>${esc(s.heading)}</strong>${s.period ? `<span>${esc(s.period)}</span>` : ""}</div>` : ""}${bullets(s.bullets)}</div>`).join("");
-      if (kind === "prj") body = bullets(e.bullets) + (e.links?.length ? `<div class="cv-links">${e.links.filter((l) => l.url).map((l) => `<a class="chip" href="${esc(l.url)}" target="_blank" rel="noopener">${icon("link", 14)}${esc(l.label)}</a>`).join("")}</div>` : "");
-      if (kind === "edu") body = bullets(e.notes);
+          <div class="cv-sub">${L(s, "heading") ? `<div class="cv-sub-head"><strong>${esc(L(s, "heading"))}</strong>${L(s, "period") ? `<span>${esc(L(s, "period"))}</span>` : ""}</div>` : ""}${bullets(L(s, "bullets"))}</div>`).join("");
+      if (kind === "prj") body = bullets(L(e, "bullets")) + (e.links?.length ? `<div class="cv-links">${e.links.filter((l) => l.url).map((l) => `<a class="chip" href="${esc(l.url)}" target="_blank" rel="noopener">${icon("link", 14)}${esc(L(l, "label"))}</a>`).join("")}</div>` : "");
+      if (kind === "edu") body = bullets(L(e, "notes"));
       const open = i === 0 && body;
       return `
         <li class="cv-item${open ? " open" : ""}${now ? " now" : ""}${body ? "" : " static"}">
@@ -415,7 +429,7 @@
           <button class="cv-head" ${body ? `aria-expanded="${!!open}"` : 'tabindex="-1"'}>
             <span class="cv-when">${esc(dates)}${dur ? ` · ${dur}` : ""}${now ? ` <em class="live">${t("current")}</em>` : ""}</span>
             <span class="cv-title">${esc(title)}</span>
-            ${org || e.place ? `<span class="cv-org">${esc(org)}${org && e.place ? " · " : ""}${esc(e.place || "")}</span>` : ""}
+            ${org || place ? `<span class="cv-org">${esc(org)}${org && place ? " · " : ""}${esc(place)}</span>` : ""}
             ${body ? '<span class="cv-toggle" aria-hidden="true"></span>' : ""}
           </button>
           ${body ? `<div class="cv-body"><div><div class="cv-inner">${body}</div></div></div>` : ""}
@@ -423,43 +437,54 @@
     }).join("");
 
     const firstJob = exp[0];
+    const heads = (firstJob?.sections || []).filter((s) => s.heading);
     const interactive = `
       <div class="cv-grid">
         <div class="cv-main">
-          <h2 class="cv-h">${icon("cv", 20)}${t("experience")}</h2><ol class="cv-tl" lang="en">${tl(exp, "exp")}</ol>
-          ${prj.length ? `<h2 class="cv-h">${icon("link", 20)}${t("projects")}</h2><ol class="cv-tl" lang="en">${tl(prj, "prj")}</ol>` : ""}
-          <h2 class="cv-h">${icon("arch", 20)}${t("education")}</h2><ol class="cv-tl" lang="en">${tl(edu, "edu")}</ol>
+          <h2 class="cv-h">${icon("cv", 20)}${t("experience")}</h2><ol class="cv-tl">${tl(exp, "exp")}</ol>
+          ${prj.length ? `<h2 class="cv-h">${icon("link", 20)}${t("projects")}</h2><ol class="cv-tl">${tl(prj, "prj")}</ol>` : ""}
+          <h2 class="cv-h">${icon("arch", 20)}${t("education")}</h2><ol class="cv-tl">${tl(edu, "edu")}</ol>
         </div>
         <aside class="cv-side">
           <section class="cv-card glance">
             <h3>${t("glance")}</h3>
-            ${firstJob ? `<div><small>${t("now")}</small><strong>${esc(firstJob.role)}</strong><span>${esc(firstJob.org)}</span></div>` : ""}
-            ${(firstJob?.sections || []).filter((s) => s.heading).length ? `<div><small>${t("titles")}</small><span>${firstJob.sections.filter((s) => s.heading).map((s) => esc(s.heading)).join(" · ")}</span></div>` : ""}
-            ${edu[0] ? `<div><small>${t("education")}</small><span>${esc(edu[0].school)}</span></div>` : ""}
+            ${firstJob ? `<div><small>${t("now")}</small><strong>${esc(L(firstJob, "role"))}</strong><span>${esc(L(firstJob, "org"))}</span></div>` : ""}
+            ${heads.length ? `<div><small>${t("titles")}</small><span>${heads.map((s) => esc(L(s, "heading"))).join(" · ")}</span></div>` : ""}
+            ${edu[0] ? `<div><small>${t("education")}</small><span>${esc(L(edu[0], "school"))}</span></div>` : ""}
           </section>
-          ${(r.skills || []).map((g) => `<section class="cv-card"><h3>${esc(g.group)}</h3><div class="skill-chips">${(g.items || []).map((s) => `<span>${esc(s)}</span>`).join("")}</div></section>`).join("")}
-          ${r.awards?.length ? `<section class="cv-card"><h3>${t("awards")}</h3>${r.awards.map((a) => `<div class="award"><strong>${esc(a.title)}</strong><small>${esc(a.date)}</small></div>`).join("")}</section>` : ""}
+          ${(r.skills || []).map((g) => `<section class="cv-card"><h3>${esc(L(g, "group"))}</h3><div class="skill-chips">${(g.items || []).map((s) => `<span>${esc(s)}</span>`).join("")}</div></section>`).join("")}
+          ${r.awards?.length ? `<section class="cv-card"><h3>${t("awards")}</h3>${r.awards.map((a) => `<div class="award"><strong>${esc(L(a, "title"))}</strong><small>${esc(L(a, "date"))}</small></div>`).join("")}</section>` : ""}
         </aside>
       </div>`;
 
     const pEntry = (title, org, dates, inner) => `<div class="p-entry"><div class="p-top"><strong>${esc(title)}</strong><span>${esc(dates)}</span></div>${org ? `<em>${esc(org)}</em>` : ""}${inner}</div>`;
+    const sep = App.lang === "zh" ? "，" : ", ";
     const paper = `
-      <article class="paper" lang="en">
+      <article class="paper" lang="${App.lang === "zh" ? "zh-CN" : "en"}">
         <header>
-          <div><h1>${esc(p.name)}</h1><div class="p-role">${esc(p.title)}</div></div>
-          <div class="p-contact">${[p.location, p.email, p.showPhone ? p.phone : "", ...socials().filter((s) => !s.url.startsWith("mailto:")).map((s) => s.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))].filter(Boolean).map(esc).join("<br/>")}</div>
+          <div><h1>${esc(p.name)}</h1><div class="p-role">${esc(L(p, "title"))}</div></div>
+          <div class="p-contact">${[L(p, "location"), p.email, p.showPhone ? p.phone : "", ...socials().filter((s) => !s.url.startsWith("mailto:")).map((s) => s.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))].filter(Boolean).map(esc).join("<br/>")}</div>
         </header>
-        ${r.summary ? `<p class="p-summary">${esc(r.summary)}</p>` : ""}
-        <h2>Experience</h2>
-        ${exp.map((e) => pEntry(e.role, `${e.org}${e.place ? ", " + e.place : ""}`, `${e.start} – ${e.end}`,
-          (e.sections || []).map((s) => `${s.heading ? `<div class="p-subhead">${esc(s.heading)}${s.period ? ` <span>(${esc(s.period)})</span>` : ""}</div>` : ""}${bullets(s.bullets)}`).join(""))).join("")}
-        ${prj.length ? `<h2>Projects</h2>${prj.map((e) => pEntry(e.title, "", e.period, bullets(e.bullets) + (e.links?.length ? `<div class="p-links">${e.links.filter((l) => l.url).map((l) => `<a href="${esc(l.url)}">${esc(l.label)}</a>`).join(" · ")}</div>` : ""))).join("")}` : ""}
-        <h2>Education</h2>
-        ${edu.map((e) => pEntry(e.degree, `${e.school}${e.place ? ", " + e.place : ""}`, `${e.start} – ${e.end}`, bullets(e.notes))).join("")}
-        <h2>Skills</h2>
-        <dl class="p-skills">${(r.skills || []).map((g) => `<dt>${esc(g.group)}</dt><dd>${(g.items || []).map(esc).join(", ")}</dd>`).join("")}</dl>
-        ${r.awards?.length ? `<h2>Awards</h2>${r.awards.map((a) => `<div class="p-top"><span class="p-award">${esc(a.title)}</span><span>${esc(a.date)}</span></div>`).join("")}` : ""}
+        ${L(r, "summary") ? `<p class="p-summary">${esc(L(r, "summary"))}</p>` : ""}
+        <h2>${t("experience")}</h2>
+        ${exp.map((e) => pEntry(L(e, "role"), `${L(e, "org")}${L(e, "place") ? sep + L(e, "place") : ""}`, range(e),
+          (e.sections || []).map((s) => `${L(s, "heading") ? `<div class="p-subhead">${esc(L(s, "heading"))}${L(s, "period") ? ` <span>(${esc(L(s, "period"))})</span>` : ""}</div>` : ""}${bullets(L(s, "bullets"))}`).join(""))).join("")}
+        ${prj.length ? `<h2>${t("projects")}</h2>${prj.map((e) => pEntry(L(e, "title"), "", L(e, "period"), bullets(L(e, "bullets")) + (e.links?.length ? `<div class="p-links">${e.links.filter((l) => l.url).map((l) => `<a href="${esc(l.url)}">${esc(L(l, "label"))}</a>`).join(" · ")}</div>` : ""))).join("")}` : ""}
+        <h2>${t("education")}</h2>
+        ${edu.map((e) => pEntry(L(e, "degree"), `${L(e, "school")}${L(e, "place") ? sep + L(e, "place") : ""}`, range(e), bullets(L(e, "notes")))).join("")}
+        <h2>${t("skills")}</h2>
+        <dl class="p-skills">${(r.skills || []).map((g) => `<dt>${esc(L(g, "group"))}</dt><dd>${(g.items || []).map(esc).join(", ")}</dd>`).join("")}</dl>
+        ${r.awards?.length ? `<h2>${t("awards")}</h2>${r.awards.map((a) => `<div class="p-top"><span class="p-award">${esc(L(a, "title"))}</span><span>${esc(L(a, "date"))}</span></div>`).join("")}` : ""}
       </article>`;
+
+    const other = App.lang === "zh" ? "en" : "zh";
+    const pdfMain = cvPdf(App.lang)
+      ? `<a class="btn" href="${esc(App.asset(cvPdf(App.lang)))}" download="${esc(cvFileName(App.lang))}" target="_blank" rel="noopener">${icon("cv", 16)}${t("pdf")}</a>`
+      : `<button class="btn" type="button" data-print="${App.lang}">${icon("cv", 16)}${t("pdf")}</button>`;
+    const otherLabel = other === "zh" ? "中文版 PDF" : "English PDF";
+    const pdfOther = cvPdf(other)
+      ? `<a class="cv-alt" href="${esc(App.asset(cvPdf(other)))}" download="${esc(cvFileName(other))}" target="_blank" rel="noopener" lang="${other === "zh" ? "zh-CN" : "en"}">${otherLabel} ↓</a>`
+      : `<button class="cv-alt" type="button" data-print="${other}" lang="${other === "zh" ? "zh-CN" : "en"}">${otherLabel} ↓</button>`;
 
     return {
       crumbs: [[t("home"), "#/"], [t("resume")]],
@@ -477,10 +502,11 @@
                 <button role="tab" data-cv="interactive" class="${cvView === "interactive" ? "on" : ""}">${t("interactive")}</button>
                 <button role="tab" data-cv="document" class="${cvView === "document" ? "on" : ""}">${t("document")}</button>
               </div>
-              <button class="btn" id="cvPrint">${icon("cv", 16)}${t("pdf")}</button>
+              ${pdfMain}
+              ${pdfOther}
             </div>
           </header>
-          ${r.summary ? `<p class="cv-summary" lang="en">${esc(r.summary)}</p>` : ""}
+          ${L(r, "summary") ? `<p class="cv-summary">${esc(L(r, "summary"))}</p>` : ""}
           <div class="cv-view cv-interactive" ${cvView === "document" ? "hidden" : ""}>${interactive}</div>
           <div class="cv-view cv-document" ${cvView === "interactive" ? "hidden" : ""}>${paper}</div>
         </section>`,
@@ -495,7 +521,7 @@
           $(".cv-interactive", root).hidden = cvView !== "interactive";
           $(".cv-document", root).hidden = cvView !== "document";
         }));
-        $("#cvPrint", root).onclick = () => print();
+        $$("[data-print]", root).forEach((b) => (b.onclick = () => printResume(b.dataset.print)));
       },
     };
   }
