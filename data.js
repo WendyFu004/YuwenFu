@@ -179,12 +179,6 @@ window.SITE = {
       "date": "2023-02-01",
       "updated": "",
       "category": "Work",
-      "tags": [
-        "For Honor",
-        "Character Pipeline",
-        "Optimization",
-        "Tools"
-      ],
       "cover": "",
       "pinned": true,
       "summary": "Owning the character pipeline as the team's sole tech artist: validation, the MTX customization system, seasonal map reviews and production tools.",
@@ -196,12 +190,6 @@ window.SITE = {
       "date": "2022-07-01",
       "updated": "",
       "category": "Work",
-      "tags": [
-        "Roller Champions",
-        "Unity",
-        "Validation",
-        "Performance"
-      ],
       "cover": "",
       "pinned": false,
       "summary": "Art technical validation for the Character team, Unity integration and performance analysis.",
@@ -213,12 +201,6 @@ window.SITE = {
       "date": "2022-09-01",
       "updated": "",
       "category": "Personal Projects",
-      "tags": [
-        "Unity",
-        "AR",
-        "VR",
-        "C#"
-      ],
       "cover": "",
       "pinned": false,
       "summary": "An Android AR app built with ARCore and an Oculus VR interaction scene.",
@@ -230,12 +212,6 @@ window.SITE = {
       "date": "2022-08-01",
       "updated": "",
       "category": "Personal Projects",
-      "tags": [
-        "Unity",
-        "AI",
-        "Game Design",
-        "C#"
-      ],
       "cover": "",
       "pinned": false,
       "summary": "A Unity racing demo with AI management and AI NPC behaviors.",
@@ -247,11 +223,6 @@ window.SITE = {
       "date": "2021-02-24",
       "updated": "",
       "category": "Software Engineering",
-      "tags": [
-        "PostgreSQL",
-        "SQL",
-        "Linux"
-      ],
       "cover": "",
       "pinned": false,
       "summary": "A technical blog post written during my internship: why logical replication, and a step-by-step setup.",

@@ -147,7 +147,6 @@
       { key: "updated", label: "Updated", type: "date", half: true },
       { key: "category", label: "Category", list: "ed-cats", half: true },
       { key: "pinned", label: "Pin to top", type: "bool", half: true },
-      { key: "tags", label: "Tags", type: "tags", hint: "Comma separated" },
       { key: "cover", label: "Cover image", type: "image", prefix: "cover" },
       { key: "summary", label: "Summary", type: "textarea", rows: 3, hint: "Shown on the home page card." },
       { key: "body", label: "Content", type: "md", rows: 20 },
@@ -314,7 +313,7 @@
     </div>`;
   }
   function wireToolbar(el, ta, ctx) {
-    const fire = () => ta.dispatchEvent(new Event("input"));
+    const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
     const wrapSel = (a, b, ph) => {
       const { selectionStart: s, selectionEnd: e, value: v } = ta;
       const sel = v.slice(s, e) || ph;
@@ -372,9 +371,11 @@
     root.innerHTML = `
       <button class="ed-fab" id="edFab" title="Open editor">✎ Edit site</button>
       <aside class="ed-drawer" id="edDrawer" aria-label="Site editor">
+        <div class="ed-grip" id="edGrip" title="Drag to resize · double-click to reset"></div>
         <header class="ed-top">
           <div class="ed-title"><strong>Site editor</strong><span class="ed-status" id="edStatus"></span></div>
           <button class="ed-btn" id="edPublish">Publish</button>
+          <button class="ed-icon" id="edFull" title="Full-width editor">⤢</button>
           <button class="ed-icon" id="edClose" title="Hide editor">⟩</button>
         </header>
         <nav class="ed-tabs">${["posts:Posts", "profile:Profile", "resume:Résumé", "site:Site", "publish:Publish settings"].map((t) => { const [k, l] = t.split(":"); return `<button data-tab="${k}">${l}</button>`; }).join("")}</nav>
@@ -387,6 +388,7 @@
     $("#edFab").onclick = () => toggle(true);
     $("#edClose").onclick = () => toggle(false);
     $("#edPublish").onclick = publish;
+    setupResize();
     $$(".ed-tabs button").forEach((b) => (b.onclick = () => { currentTab = b.dataset.tab; editingPost = null; drawTab(); }));
     addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") { e.preventDefault(); saveDraft(); toast("Draft saved in this browser."); }
@@ -398,7 +400,66 @@
   function toggle(open) {
     document.body.classList.toggle("ed-open", open);
     localStorage.setItem("site-editor-open", open ? "1" : "0");
+    if (open) requestAnimationFrame(() => fitAll());
   }
+
+  /* ---------------- Drawer width: drag to resize, full-width toggle ---------------- */
+  const LS_W = "site-editor-width", LS_FULL = "site-editor-full";
+  const defaultW = () => Math.round(Math.max(560, innerWidth * 0.5));
+  const clampW = (w) => Math.round(Math.min(Math.max(w, 380), Math.max(380, innerWidth - 160)));
+  let edW = clampW(+localStorage.getItem(LS_W) || defaultW());
+  const applyW = () => document.documentElement.style.setProperty("--ed-w", clampW(edW) + "px");
+  function setFull(on) {
+    document.body.classList.toggle("ed-full", on);
+    localStorage.setItem(LS_FULL, on ? "1" : "0");
+    const b = $("#edFull");
+    b.textContent = on ? "⤡" : "⤢";
+    b.title = on ? "Exit full width" : "Full-width editor";
+    requestAnimationFrame(() => fitAll());
+  }
+  function setupResize() {
+    applyW();
+    setFull(localStorage.getItem(LS_FULL) === "1");
+    $("#edFull").onclick = () => setFull(!document.body.classList.contains("ed-full"));
+    const grip = $("#edGrip");
+    let fitT;
+    grip.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      grip.setPointerCapture(e.pointerId);
+      document.body.classList.add("ed-resizing");
+      const move = (ev) => {
+        edW = clampW(innerWidth - ev.clientX);
+        applyW();
+        clearTimeout(fitT); fitT = setTimeout(fitAll, 60);
+      };
+      const up = () => {
+        grip.removeEventListener("pointermove", move);
+        grip.removeEventListener("pointerup", up);
+        grip.removeEventListener("pointercancel", up);
+        document.body.classList.remove("ed-resizing");
+        localStorage.setItem(LS_W, edW);
+        fitAll();
+      };
+      grip.addEventListener("pointermove", move);
+      grip.addEventListener("pointerup", up);
+      grip.addEventListener("pointercancel", up);
+    });
+    grip.ondblclick = () => { edW = clampW(defaultW()); applyW(); localStorage.setItem(LS_W, edW); fitAll(); };
+    addEventListener("resize", () => { applyW(); clearTimeout(fitT); fitT = setTimeout(fitAll, 100); });
+  }
+
+  /* ---------------- Auto-growing text areas ---------------- */
+  function fit(ta) {
+    if (!ta.offsetParent) return; // hidden (collapsed list item / closed drawer)
+    const minH = parseFloat(getComputedStyle(ta).minHeight) || 0;
+    const body = $("#edBody"), keep = body && body.scrollTop;
+    ta.style.height = "auto";
+    ta.style.height = Math.max(minH, ta.scrollHeight + 2) + "px";
+    if (body) body.scrollTop = keep;
+  }
+  const fitAll = (root = document) => $$(".ed-drawer textarea", root).forEach(fit);
+  document.addEventListener("input", (e) => { if (e.target.matches?.(".ed-drawer textarea")) fit(e.target); });
+  document.addEventListener("toggle", (e) => { if (e.target.matches?.(".ed-drawer details") && e.target.open) fitAll(e.target); }, true);
   function drawTab() {
     $$(".ed-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === currentTab));
     body.innerHTML = "";
@@ -409,6 +470,7 @@
     if (currentTab === "resume") { body.appendChild(intro("Everything on the Résumé page and the printable PDF.")); body.appendChild(build(SCHEMA.resume, data.resume, () => changed())); go("#/resume"); }
     if (currentTab === "site") { body.appendChild(intro("Site-wide settings.")); body.appendChild(build(SCHEMA.site, data.site, () => changed())); drawDataTools(); }
     if (currentTab === "publish") drawPublishSettings();
+    requestAnimationFrame(() => fitAll());
   }
   const intro = (t) => Object.assign(document.createElement("p"), { className: "ed-intro", textContent: t });
   const go = (h) => { if (location.hash !== h) location.hash = h; };
@@ -416,7 +478,7 @@
   function drawPosts() {
     const list = [...data.posts].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
     body.innerHTML = `
-      <div class="ed-row"><p class="ed-intro">Portfolio posts appear on Home, Categories, Tags and Archives.</p><button class="ed-btn" id="edNew">＋ New post</button></div>
+      <div class="ed-row"><p class="ed-intro">Portfolio posts appear on Home, Categories and Archives.</p><button class="ed-btn" id="edNew">＋ New post</button></div>
       <ul class="ed-posts">${list.map((p) => `
         <li><button data-id="${esc(p.id)}">
           ${p.cover ? `<img src="${esc(App.asset(p.cover))}" alt=""/>` : `<span class="ed-ph"></span>`}
@@ -424,7 +486,7 @@
         </button></li>`).join("")}</ul>`;
     $("#edNew").onclick = () => {
       const today = new Date().toISOString().slice(0, 10);
-      const p = { id: uniqueId("new-post"), title: "Untitled post", date: today, updated: "", category: "Work", tags: [], cover: "", pinned: false, summary: "", body: "## Overview\n\nWrite about the project here. Use the toolbar to add images, GIFs or videos.\n" };
+      const p = { id: uniqueId("new-post"), title: "Untitled post", date: today, updated: "", category: "Work", cover: "", pinned: false, summary: "", body: "## Overview\n\nWrite about the project here. Use the toolbar to add images, GIFs or videos.\n" };
       data.posts.unshift(p);
       changed({ now: true });
       editingPost = p.id; drawTab();

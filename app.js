@@ -110,7 +110,6 @@
   const NAV = [
     ["home", "Home", "#/"],
     ["cat", "Categories", "#/categories"],
-    ["tag", "Tags", "#/tags"],
     ["arch", "Archives", "#/archives"],
     ["cv", "Résumé", "#/resume"],
     ["about", "About", "#/about"],
@@ -158,13 +157,9 @@
   /* ================= Panel ================= */
   function panelDefault() {
     const recent = [...posts()].sort((a, b) => (b.updated || b.date || "").localeCompare(a.updated || a.date || "")).slice(0, 5);
-    const tags = countBy("tags").slice(0, 12);
     return `
       <section class="pn-block"><h3>Recently Updated</h3>
         <ul class="pn-list">${recent.map((p) => `<li><a href="#/post/${esc(p.id)}">${esc(p.title)}</a></li>`).join("")}</ul>
-      </section>
-      <section class="pn-block"><h3>Trending Tags</h3>
-        <div class="tag-cloud small">${tags.map(([t]) => `<a class="tag" href="#/tags/${encodeURIComponent(t)}">${esc(t)}</a>`).join("")}</div>
       </section>`;
   }
   function panelToc(root) {
@@ -229,7 +224,6 @@
             </header>
             ${p.cover ? cover(p, "post-cover") : ""}
             <div class="md" id="postBody">${md(p.body)}</div>
-            ${p.tags?.length ? `<div class="post-tags">${icon("tag", 16)}${p.tags.map((t) => `<a class="tag" href="#/tags/${encodeURIComponent(t)}">${esc(t)}</a>`).join("")}</div>` : ""}
             <nav class="post-nav">
               ${older ? `<a href="#/post/${esc(older.id)}"><small>Older</small>${esc(older.title)}</a>` : "<span></span>"}
               ${newer ? `<a class="right" href="#/post/${esc(newer.id)}"><small>Newer</small>${esc(newer.title)}</a>` : "<span></span>"}
@@ -251,16 +245,6 @@
               <a class="cat-head" href="#/categories/${encodeURIComponent(c)}">${icon("cat", 20)}<strong>${esc(c)}</strong><small>${n} post${n > 1 ? "s" : ""}</small></a>
               <ul>${posts().filter((p) => p.category === c).map((p) => `<li><a href="#/post/${esc(p.id)}">${esc(p.title)}</a></li>`).join("")}</ul>
             </section>`).join("")}</div>`,
-      };
-    },
-    tags(name) {
-      if (name) {
-        const list = posts().filter((p) => (p.tags || []).includes(name));
-        return { crumbs: [["Home", "#/"], ["Tags", "#/tags"], [name]], html: `<h1 class="page-title">${icon("tag", 26)}${esc(name)} <small>${list.length}</small></h1><ul class="rows">${list.map(postRow).join("")}</ul>` };
-      }
-      return {
-        crumbs: [["Home", "#/"], ["Tags"]],
-        html: `<h1 class="page-title">Tags</h1><div class="tag-cloud">${countBy("tags").map(([t, n]) => `<a class="tag big" href="#/tags/${encodeURIComponent(t)}">${esc(t)}<sup>${n}</sup></a>`).join("")}</div>`,
       };
     },
     archives() {
@@ -429,7 +413,7 @@
   function searchView(q) {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
     const hits = posts().filter((p) => {
-      const hay = [p.title, p.summary, p.category, ...(p.tags || []), p.body].join(" ").toLowerCase();
+      const hay = [p.title, p.summary, p.category, p.body].join(" ").toLowerCase();
       return terms.every((t) => hay.includes(t));
     });
     return {
@@ -450,7 +434,6 @@
       : !name ? views.home()
       : name === "post" ? views.post(a)
       : name === "categories" ? views.categories(a)
-      : name === "tags" ? views.tags(a)
       : views[name] && !["post", "notfound"].includes(name) ? views[name](a)
       : views.notfound();
     document.body.dataset.route = q ? "search" : name || "home";
