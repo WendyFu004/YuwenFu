@@ -174,48 +174,26 @@ window.SITE = {
   },
   "posts": [
     {
+      "id": "中文检测",
+      "title": "中文检测",
+      "date": "2026-11-26",
+      "updated": "",
+      "category": "Personal ProjectsWor",
+      "cover": "",
+      "pinned": false,
+      "summary": "",
+      "body": "## Overview\n\n中文检测\n- 中文分段\n- 中文分段\n\n内容1234\n"
+    },
+    {
       "id": "for-honor-character-tech-art",
       "title": "For Honor — Character Technical Art",
       "date": "2023-02-01",
       "updated": "",
       "category": "Work",
       "cover": "",
-      "pinned": true,
+      "pinned": false,
       "summary": "Owning the character pipeline as the team's sole tech artist: validation, the MTX customization system, seasonal map reviews and production tools.",
       "body": "## Role\n\nI'm the Technical Artist for the character pipeline on **For Honor**, managing the full production cycle from concept to final in-game validation as the sole tech artist on the team.\n\n## Character customization (MTX)\n\nI maintain the custom expression system behind MTX content:\n\n- Dynamic armor color changes\n- Paint pattern applications\n- A modular ornament equipment system\n\n## Seasonal event maps\n\nI also support the Events (Map) team with technical reviews and performance optimization for seasonal event maps.\n\n## Tools\n\nI build and maintain production tools and scripts — for example a **Photoshop JavaScript tool** that streamlines texture artists' workflows.\n\n> ✏️ Open to add screenshots, breakdowns or videos here."
-    },
-    {
-      "id": "roller-champions-asset-validation",
-      "title": "Roller Champions — Character Asset Validation",
-      "date": "2022-07-01",
-      "updated": "",
-      "category": "Work",
-      "cover": "",
-      "pinned": false,
-      "summary": "Art technical validation for the Character team, Unity integration and performance analysis.",
-      "body": "## Overview\n\nOn **Roller Champions** I conducted art technical validation for Character team assets, making sure they met guidelines and technical standards, and worked with artists to produce production-ready assets efficiently.\n\n## Integration & performance\n\nI integrated assets into **Unity** and ran performance analysis to keep the game running optimally.\n\n> ✏️ Add images or a breakdown of the validation process in the editor."
-    },
-    {
-      "id": "unity-ar-vr-demos",
-      "title": "AR & VR Demos in Unity",
-      "date": "2022-09-01",
-      "updated": "",
-      "category": "Personal Projects",
-      "cover": "",
-      "pinned": false,
-      "summary": "An Android AR app built with ARCore and an Oculus VR interaction scene.",
-      "body": "## AR Demo — ARCore\n\nA Unity application for Android using the **ARCore** package. It spawns 3D objects on any detected flat surface and supports move, rotate and scale manipulation.\n\nhttps://youtube.com/shorts/TuxqPowOQ20\n\n## VR Demo — Oculus XR\n\nA Unity 3D scene using the **Oculus XR plugin**. The player interacts with models using VR hands and moves in two modes: continuous movement and teleportation with a destination preview.\n\n[Watch the VR demo](https://youtu.be/XgzmbaefqVMx)"
-    },
-    {
-      "id": "unity-3d-ai-race",
-      "title": "3D AI Race Demo",
-      "date": "2022-08-01",
-      "updated": "",
-      "category": "Personal Projects",
-      "cover": "",
-      "pinned": false,
-      "summary": "A Unity racing demo with AI management and AI NPC behaviors.",
-      "body": "## Overview\n\nA racing game demo built in **Unity**, focused on game design and programming — including AI management and AI-driven NPC behaviors.\n\n[▶ Watch the demo video](https://drive.google.com/file/d/1zInK7OWcIODfY4pLpxi5t9i2F09PTjB0/view?usp=sharing)"
     },
     {
       "id": "postgresql-logical-replication",
