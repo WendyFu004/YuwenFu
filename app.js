@@ -6,13 +6,60 @@
   const slug = (s) => String(s).toLowerCase().trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+  /* ================= Language (UI strings + optional *_zh content fields) ================= */
+  const STR = {
+    en: {
+      home: "Home", categories: "Categories", archives: "Archives", resume: "Resume", about: "About",
+      recent: "Recently Updated", contents: "Contents", search: "Search", searchPh: "Search…",
+      results: (n, q) => `${n} result${n === 1 ? "" : "s"} for “${q}”`, noResults: "Nothing found. Try another keyword.",
+      noPosts: "No posts yet.", notFound: "Not found", notFoundText: "That page doesn't exist.", goHome: "Go home →",
+      pinned: "Pinned", minRead: (n) => `${n} min read`, updated: (d) => `Updated ${d}`, older: "Older", newer: "Newer",
+      nPosts: (n) => `${n} post${n > 1 ? "s" : ""}`,
+      experience: "Experience", projects: "Projects", education: "Education", glance: "At a glance", now: "Now",
+      titles: "Titles", awards: "Awards", skills: "Skills", interactive: "Interactive", document: "Document",
+      pdf: "Download PDF", current: "Current", cvView: "Resume view",
+      onlyOther: "This post is only available in Chinese.", readIn: "Read in",
+      videoOpen: (s) => `Can't play? Open on ${s} ↗`,
+      dur: (y, m) => [y && `${y} yr${y > 1 ? "s" : ""}`, m && `${m} mo${m > 1 ? "s" : ""}`].filter(Boolean).join(" "),
+    },
+    zh: {
+      home: "首页", categories: "分类", archives: "归档", resume: "简历", about: "关于我",
+      recent: "最近更新", contents: "目录", search: "搜索", searchPh: "搜索…",
+      results: (n, q) => `“${q}” 共 ${n} 条结果`, noResults: "没有找到相关内容，换个关键词试试。",
+      noPosts: "暂无文章。", notFound: "页面不存在", notFoundText: "这个页面不存在。", goHome: "返回首页 →",
+      pinned: "置顶", minRead: (n) => `约 ${n} 分钟`, updated: (d) => `更新于 ${d}`, older: "上一篇", newer: "下一篇",
+      nPosts: (n) => `${n} 篇`,
+      experience: "工作经历", projects: "项目", education: "教育背景", glance: "概览", now: "目前",
+      titles: "参与项目", awards: "奖项", skills: "技能", interactive: "交互版", document: "文档版",
+      pdf: "下载 PDF", current: "至今", cvView: "简历视图",
+      onlyOther: "本文暂无中文版，以下为英文原文。", readIn: "阅读语言",
+      videoOpen: (s) => `无法播放？在 ${s} 中打开 ↗`,
+      dur: (y, m) => [y && `${y}年`, m && `${m}个月`].filter(Boolean).join(""),
+    },
+  };
+  function initialLang() {
+    const q = new URLSearchParams(location.search).get("lang");
+    if (q === "en" || q === "zh") { try { localStorage.setItem("lang", q); } catch {} return q; }
+    const s = localStorage.getItem("lang");
+    if (s === "en" || s === "zh") return s;
+    return (navigator.languages || [navigator.language || ""]).some((l) => /^zh/i.test(l)) ? "zh" : "en";
+  }
+  const t = (k, ...a) => { const v = STR[App.lang][k] ?? STR.en[k]; return typeof v === "function" ? v(...a) : v; };
+  /* Localized field: obj[key + "_zh"] in Chinese mode when filled in, else obj[key]. */
+  const L = (o, k, lang = App.lang) => (o && lang === "zh" && String(o[k + "_zh"] ?? "").trim() ? o[k + "_zh"] : o?.[k] ?? "");
+  const cjkRatio = (s) => { const x = String(s || "").replace(/[\s\d\p{P}\p{S}]/gu, ""); return x ? (x.match(/[㐀-鿿]/g) || []).length / x.length : 0; };
+  const catName = (c) => (App.lang === "zh" && App.data.site?.categoryNames?.[c]) || c;
+
   const App = (window.App = {
     data: window.SITE,
+    lang: "en",
     assets: {}, // path -> object URL / data URL for images uploaded in the editor but not yet published
     asset(p) { return (p && this.assets[p]) || p || ""; },
     rerender() { renderShell(); route(true); },
-    esc, slug,
+    setLang(l) { setLang(l); },
+    esc, slug, L,
   });
+  App.lang = initialLang();
 
   /* ================= Markdown ================= */
   function embeds(src) {
@@ -21,12 +68,16 @@
       .map((line) => {
         const t = line.trim();
         let m = t.match(/^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})\S*$/i);
+        // Note under blocked-in-China players, so visitors still get a working link.
+        const note = (site) => `<p class="embed-note"><a href="${esc(t)}" target="_blank" rel="noopener">${esc(STR[App.lang].videoOpen(site))}</a></p>`;
         if (m) {
           const vertical = m[1] === "shorts/";
-          return `\n<div class="embed${vertical ? " vertical" : ""}"><iframe src="https://www.youtube.com/embed/${esc(m[2])}" title="YouTube video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe></div>\n`;
+          return `\n<div class="embed${vertical ? " vertical" : ""}"><iframe src="https://www.youtube.com/embed/${esc(m[2])}" title="YouTube video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe></div>\n${note("YouTube")}\n`;
         }
         m = t.match(/^https?:\/\/(?:www\.)?vimeo\.com\/(\d+)\S*$/i);
-        if (m) return `\n<div class="embed"><iframe src="https://player.vimeo.com/video/${m[1]}" title="Vimeo video" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>\n`;
+        if (m) return `\n<div class="embed"><iframe src="https://player.vimeo.com/video/${m[1]}" title="Vimeo video" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>\n${note("Vimeo")}\n`;
+        m = t.match(/^https?:\/\/(?:www\.|m\.)?bilibili\.com\/video\/(BV[0-9A-Za-z]+)\S*$/i);
+        if (m) return `\n<div class="embed"><iframe src="https://player.bilibili.com/player.html?bvid=${esc(m[1])}&autoplay=0&high_quality=1" title="Bilibili video" loading="lazy" scrolling="no" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>\n`;
         m = t.match(/^(\S+\.(?:mp4|webm|mov))$/i);
         if (m) return `\n<video class="md-video" src="${esc(m[1])}" controls playsinline preload="metadata"></video>\n`;
         return line;
@@ -62,7 +113,7 @@
   const fmtDate = (d) => {
     if (!d) return "";
     const [y, m, day] = d.split("-").map(Number);
-    return `${MONTHS[(m || 1) - 1]} ${day || 1}, ${y}`;
+    return App.lang === "zh" ? `${y}年${m || 1}月${day || 1}日` : `${MONTHS[(m || 1) - 1]} ${day || 1}, ${y}`;
   };
   const hue = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
   function cover(p, cls = "") {
@@ -71,7 +122,12 @@
     const mark = (p.category || p.title || "?").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
     return `<div class="cover gen ${cls}" style="--h:${h}"><span>${esc(mark)}</span></div>`;
   }
-  const readTime = (p) => Math.max(1, Math.round(String(p.body || "").split(/\s+/).length / 200));
+  const readTime = (body) => {
+    const s = String(body || "");
+    const cjk = (s.match(/[㐀-鿿]/g) || []).length; // ~400 Chinese characters per minute
+    const words = s.replace(/[㐀-鿿]/g, " ").split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.round(words / 200 + cjk / 400));
+  };
   const countBy = (key) => {
     const m = new Map();
     posts().forEach((p) => [].concat(p[key] || []).forEach((v) => v && m.set(v, (m.get(v) || 0) + 1)));
@@ -108,12 +164,29 @@
 
   /* ================= Shell ================= */
   const NAV = [
-    ["home", "Home", "#/"],
-    ["cat", "Categories", "#/categories"],
-    ["arch", "Archives", "#/archives"],
-    ["cv", "Résumé", "#/resume"],
-    ["about", "About", "#/about"],
+    ["home", "home", "#/"],
+    ["cat", "categories", "#/categories"],
+    ["arch", "archives", "#/archives"],
+    ["cv", "resume", "#/resume"],
+    ["about", "about", "#/about"],
   ];
+  function setLang(l) {
+    if (l !== "en" && l !== "zh") return;
+    App.lang = l;
+    postLang = null;
+    try { localStorage.setItem("lang", l); } catch {}
+    const u = new URL(location.href);
+    if (u.searchParams.has("lang")) { u.searchParams.set("lang", l); history.replaceState(null, "", u); }
+    applyLangChrome();
+    App.rerender();
+  }
+  function applyLangChrome() {
+    document.documentElement.lang = App.lang === "zh" ? "zh-CN" : "en";
+    $$("#langSwitch [data-lang]").forEach((b) => { const on = b.dataset.lang === App.lang; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+    $("#searchInput").placeholder = t("searchPh");
+    const d = $('meta[name="description"]');
+    if (d) d.content = L(App.data.site, "description");
+  }
   function avatarHTML(cls) {
     const p = App.data.profile;
     const initials = (p.name || "?").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -129,9 +202,9 @@
       <div class="sb-profile">
         <a href="#/" class="sb-avatar-link" aria-label="Home">${avatarHTML("sb-avatar")}</a>
         <a href="#/" class="sb-name">${esc(site.title || p.name)}</a>
-        <p class="sb-tagline">${esc(p.tagline)}</p>
+        <p class="sb-tagline">${esc(L(p, "tagline"))}</p>
       </div>
-      <nav class="sb-nav">${NAV.map(([ic, label, href]) => `<a href="${href}" data-nav="${href}">${icon(ic)}<span>${label}</span></a>`).join("")}</nav>
+      <nav class="sb-nav">${NAV.map(([ic, key, href]) => `<a href="${href}" data-nav="${href}">${icon(ic)}<span>${t(key)}</span></a>`).join("")}</nav>
       <div class="sb-bottom">
         <button class="sb-icon" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">${icon(document.documentElement.dataset.theme === "dark" ? "sun" : "moon")}</button>
         <span class="sb-sep"></span>
@@ -144,7 +217,7 @@
       renderShell();
       markNav();
     };
-    $("#footer").innerHTML = `<span>© ${new Date().getFullYear()} ${esc(p.name)}</span><span>${mdInline(site.footer || "")}</span>`;
+    $("#footer").innerHTML = `<span>© ${new Date().getFullYear()} ${esc(p.name)}</span><span>${mdInline(L(site, "footer"))}</span>`;
   }
   function markNav() {
     const h = location.hash || "#/";
@@ -158,14 +231,14 @@
   function panelDefault() {
     const recent = [...posts()].sort((a, b) => (b.updated || b.date || "").localeCompare(a.updated || a.date || "")).slice(0, 5);
     return `
-      <section class="pn-block"><h3>Recently Updated</h3>
-        <ul class="pn-list">${recent.map((p) => `<li><a href="#/post/${esc(p.id)}">${esc(p.title)}</a></li>`).join("")}</ul>
+      <section class="pn-block"><h3>${t("recent")}</h3>
+        <ul class="pn-list">${recent.map((p) => `<li><a href="#/post/${esc(p.id)}">${esc(L(p, "title"))}</a></li>`).join("")}</ul>
       </section>`;
   }
   function panelToc(root) {
     const hs = $$("h2, h3", root);
     const toc = hs.length
-      ? `<section class="pn-block toc"><h3>Contents</h3><ul>${hs.map((h) => `<li class="${h.tagName.toLowerCase()}"><a href="#${h.id}" data-toc="${h.id}">${esc(h.textContent)}</a></li>`).join("")}</ul></section>`
+      ? `<section class="pn-block toc"><h3>${t("contents")}</h3><ul>${hs.map((h) => `<li class="${h.tagName.toLowerCase()}"><a href="#${h.id}" data-toc="${h.id}">${esc(h.textContent)}</a></li>`).join("")}</ul></section>`
       : "";
     $("#panel").innerHTML = toc + panelDefault();
     $$("[data-toc]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); document.getElementById(a.dataset.toc)?.scrollIntoView({ behavior: "smooth" }); }));
@@ -181,25 +254,26 @@
   const postCard = (p) => `
     <a class="post-card" href="#/post/${esc(p.id)}">
       <div class="pc-text">
-        <h2>${esc(p.title)}</h2>
-        <p>${esc(p.summary)}</p>
+        <h2>${esc(L(p, "title"))}</h2>
+        <p>${esc(L(p, "summary"))}</p>
         <div class="meta">
           <span>${icon("cal", 14)}${fmtDate(p.date)}</span>
-          ${p.category ? `<span>${icon("cat", 14)}${esc(p.category)}</span>` : ""}
-          ${p.pinned ? `<span class="pinned">${icon("pin", 14)}Pinned</span>` : ""}
+          ${p.category ? `<span>${icon("cat", 14)}${esc(catName(p.category))}</span>` : ""}
+          ${p.pinned ? `<span class="pinned">${icon("pin", 14)}${t("pinned")}</span>` : ""}
         </div>
       </div>
       ${cover(p, "pc-cover")}
     </a>`;
-  const postRow = (p) => `<li><a href="#/post/${esc(p.id)}"><time>${fmtDate(p.date)}</time><span>${esc(p.title)}</span></a></li>`;
+  const postRow = (p) => `<li><a href="#/post/${esc(p.id)}"><time>${fmtDate(p.date)}</time><span>${esc(L(p, "title"))}</span></a></li>`;
+  let postLang = null; // per-post language override from the "English / 中文" switch on a bilingual post
 
   const views = {
     home() {
       const list = posts().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
       return {
-        crumbs: [["Home"]],
+        crumbs: [[t("home")]],
         html: `<h1 class="sr-only">${esc(App.data.site.title)}</h1>
-          <div class="post-list">${list.map(postCard).join("") || `<p class="empty">No posts yet.</p>`}</div>`,
+          <div class="post-list">${list.map(postCard).join("") || `<p class="empty">${t("noPosts")}</p>`}</div>`,
       };
     },
     post(id) {
@@ -207,43 +281,59 @@
       const i = all.findIndex((p) => p.id === id);
       if (i < 0) return views.notfound();
       const p = all[i], newer = all[i - 1], older = all[i + 1];
+      const hasZh = !!String(p.body_zh || "").trim();
+      const baseIsZh = cjkRatio(p.title + " " + p.body) > 0.3;
+      const vl = (hasZh && postLang) || App.lang;
+      const F = (k) => L(p, k, vl);
+      const showingZh = vl === "zh" ? hasZh || baseIsZh : baseIsZh;
+      const notice = !hasZh && (App.lang === "zh" ? !baseIsZh : baseIsZh) ? `<p class="lang-note">${t("onlyOther")}</p>` : "";
+      const sw = hasZh
+        ? `<div class="post-lang"><span>${t("readIn")}</span><div class="seg small">
+            <button type="button" data-plang="en" class="${vl === "en" ? "on" : ""}" lang="en">English</button>
+            <button type="button" data-plang="zh" class="${vl === "zh" ? "on" : ""}" lang="zh-CN">中文</button></div></div>`
+        : "";
       return {
-        crumbs: [["Home", "#/"], [p.title]],
+        crumbs: [[t("home"), "#/"], [F("title")]],
         toc: true,
         html: `
-          <article class="post">
+          <article class="post" lang="${showingZh ? "zh-CN" : "en"}">
             <header class="post-head">
-              <h1>${esc(p.title)}</h1>
-              ${p.summary ? `<p class="post-sub">${esc(p.summary)}</p>` : ""}
-              <div class="meta">
+              <h1>${esc(F("title"))}</h1>
+              ${F("summary") ? `<p class="post-sub">${esc(F("summary"))}</p>` : ""}
+              <div class="meta" lang="${App.lang === "zh" ? "zh-CN" : "en"}">
                 <span>${icon("cal", 14)}${fmtDate(p.date)}</span>
-                ${p.updated ? `<span>Updated ${fmtDate(p.updated)}</span>` : ""}
-                ${p.category ? `<a href="#/categories/${encodeURIComponent(p.category)}">${icon("cat", 14)}${esc(p.category)}</a>` : ""}
-                <span>${icon("clock", 14)}${readTime(p)} min read</span>
+                ${p.updated ? `<span>${t("updated", fmtDate(p.updated))}</span>` : ""}
+                ${p.category ? `<a href="#/categories/${encodeURIComponent(p.category)}">${icon("cat", 14)}${esc(catName(p.category))}</a>` : ""}
+                <span>${icon("clock", 14)}${t("minRead", readTime(F("body")))}</span>
               </div>
+              ${sw}
             </header>
+            ${notice}
             ${p.cover ? cover(p, "post-cover") : ""}
-            <div class="md" id="postBody">${md(p.body)}</div>
-            <nav class="post-nav">
-              ${older ? `<a href="#/post/${esc(older.id)}"><small>Older</small>${esc(older.title)}</a>` : "<span></span>"}
-              ${newer ? `<a class="right" href="#/post/${esc(newer.id)}"><small>Newer</small>${esc(newer.title)}</a>` : "<span></span>"}
+            <div class="md" id="postBody">${md(F("body"))}</div>
+            <nav class="post-nav" lang="${App.lang === "zh" ? "zh-CN" : "en"}">
+              ${older ? `<a href="#/post/${esc(older.id)}"><small>${t("older")}</small>${esc(L(older, "title"))}</a>` : "<span></span>"}
+              ${newer ? `<a class="right" href="#/post/${esc(newer.id)}"><small>${t("newer")}</small>${esc(L(newer, "title"))}</a>` : "<span></span>"}
             </nav>
           </article>`,
+        after(root) {
+          $$("[data-plang]", root).forEach((b) => (b.onclick = () => { postLang = b.dataset.plang; route(true); }));
+        },
       };
     },
     categories(name) {
       if (name) {
         const list = posts().filter((p) => p.category === name);
-        return { crumbs: [["Home", "#/"], ["Categories", "#/categories"], [name]], html: `<h1 class="page-title">${icon("cat", 26)}${esc(name)} <small>${list.length}</small></h1><ul class="rows">${list.map(postRow).join("")}</ul>` };
+        return { crumbs: [[t("home"), "#/"], [t("categories"), "#/categories"], [catName(name)]], html: `<h1 class="page-title">${icon("cat", 26)}${esc(catName(name))} <small>${list.length}</small></h1><ul class="rows">${list.map(postRow).join("")}</ul>` };
       }
       const cats = countBy("category");
       return {
-        crumbs: [["Home", "#/"], ["Categories"]],
-        html: `<h1 class="page-title">Categories</h1>
+        crumbs: [[t("home"), "#/"], [t("categories")]],
+        html: `<h1 class="page-title">${t("categories")}</h1>
           <div class="cat-grid">${cats.map(([c, n]) => `
             <section class="cat-card">
-              <a class="cat-head" href="#/categories/${encodeURIComponent(c)}">${icon("cat", 20)}<strong>${esc(c)}</strong><small>${n} post${n > 1 ? "s" : ""}</small></a>
-              <ul>${posts().filter((p) => p.category === c).map((p) => `<li><a href="#/post/${esc(p.id)}">${esc(p.title)}</a></li>`).join("")}</ul>
+              <a class="cat-head" href="#/categories/${encodeURIComponent(c)}">${icon("cat", 20)}<strong>${esc(catName(c))}</strong><small>${t("nPosts", n)}</small></a>
+              <ul>${posts().filter((p) => p.category === c).map((p) => `<li><a href="#/post/${esc(p.id)}">${esc(L(p, "title"))}</a></li>`).join("")}</ul>
             </section>`).join("")}</div>`,
       };
     },
@@ -251,42 +341,43 @@
       const by = {};
       posts().forEach((p) => (by[(p.date || "----").slice(0, 4)] ||= []).push(p));
       return {
-        crumbs: [["Home", "#/"], ["Archives"]],
-        html: `<h1 class="page-title">Archives</h1><div class="archive">${Object.keys(by).sort().reverse().map((y) => `
+        crumbs: [[t("home"), "#/"], [t("archives")]],
+        html: `<h1 class="page-title">${t("archives")}</h1><div class="archive">${Object.keys(by).sort().reverse().map((y) => `
           <section><h2>${y}</h2><ul>${by[y].map((p) => {
             const [, m, d] = (p.date || "").split("-");
-            return `<li><time><b>${d || ""}</b>${MONTHS[(+m || 1) - 1]}</time><a href="#/post/${esc(p.id)}">${esc(p.title)}</a></li>`;
+            const mon = App.lang === "zh" ? `${+m || 1}月` : MONTHS[(+m || 1) - 1];
+            return `<li><time><b>${d || ""}</b>${mon}</time><a href="#/post/${esc(p.id)}">${esc(L(p, "title"))}</a></li>`;
           }).join("")}</ul></section>`).join("")}</div>`,
       };
     },
     about() {
       const p = App.data.profile;
       return {
-        crumbs: [["Home", "#/"], ["About"]],
+        crumbs: [[t("home"), "#/"], [t("about")]],
         html: `<div class="about">
-          <div class="about-head">${avatarHTML("about-avatar")}<div><h1>${esc(p.name)}</h1><p>${esc(p.title)} · ${esc(p.location)}</p></div></div>
-          <div class="md">${md(p.about)}</div>
+          <div class="about-head">${avatarHTML("about-avatar")}<div><h1>${esc(p.name)}</h1><p>${esc(L(p, "title"))} · ${esc(L(p, "location"))}</p></div></div>
+          <div class="md">${md(L(p, "about"))}</div>
           <div class="contact-row">${contactChips()}</div>
         </div>`,
       };
     },
     resume: () => resumeView(),
     notfound() {
-      return { crumbs: [["Home", "#/"], ["Not found"]], html: `<div class="empty big"><h1>404</h1><p>That page doesn't exist. <a href="#/">Go home →</a></p></div>` };
+      return { crumbs: [[t("home"), "#/"], [t("notFound")]], html: `<div class="empty big"><h1>404</h1><p>${t("notFoundText")} <a href="#/">${t("goHome")}</a></p></div>` };
     },
   };
 
   function contactChips() {
     const p = App.data.profile;
     const chips = [];
-    if (p.location) chips.push(`<span class="chip">${icon("loc", 15)}${esc(p.location)}</span>`);
+    if (p.location) chips.push(`<span class="chip">${icon("loc", 15)}${esc(L(p, "location"))}</span>`);
     if (p.email) chips.push(`<a class="chip" href="mailto:${esc(p.email)}">${icon("mail", 15)}${esc(p.email)}</a>`);
     if (p.phone && p.showPhone) chips.push(`<a class="chip" href="tel:${esc(p.phone)}">${icon("phone", 15)}${esc(p.phone)}</a>`);
     socials().filter((s) => !s.url.startsWith("mailto:")).forEach((s) => chips.push(`<a class="chip" href="${esc(s.url)}" target="_blank" rel="noopener">${icon(s.type, 15)}${esc(s.label)}</a>`));
     return chips.join("");
   }
 
-  /* ================= Résumé ================= */
+  /* ================= Resume (content stays English; UI labels follow the language) ================= */
   const parseMonth = (s) => {
     if (!s || /present|now|current/i.test(s)) return new Date();
     const d = new Date("1 " + s.replace(/[–-]/g, " "));
@@ -298,7 +389,7 @@
     let m = (e.getFullYear() - s.getFullYear()) * 12 + e.getMonth() - s.getMonth() + 1;
     if (m <= 0) return "";
     const y = Math.floor(m / 12); m %= 12;
-    return [y && `${y} yr${y > 1 ? "s" : ""}`, m && `${m} mo${m > 1 ? "s" : ""}`].filter(Boolean).join(" ");
+    return t("dur", y, m);
   }
   const bullets = (arr) => (arr?.length ? `<ul>${arr.map((b) => `<li>${mdInline(b)}</li>`).join("")}</ul>` : "");
   let cvView = "interactive";
@@ -322,7 +413,7 @@
         <li class="cv-item${open ? " open" : ""}${now ? " now" : ""}${body ? "" : " static"}">
           <span class="cv-dot" aria-hidden="true"></span>
           <button class="cv-head" ${body ? `aria-expanded="${!!open}"` : 'tabindex="-1"'}>
-            <span class="cv-when">${esc(dates)}${dur ? ` · ${dur}` : ""}${now ? ' <em class="live">Current</em>' : ""}</span>
+            <span class="cv-when">${esc(dates)}${dur ? ` · ${dur}` : ""}${now ? ` <em class="live">${t("current")}</em>` : ""}</span>
             <span class="cv-title">${esc(title)}</span>
             ${org || e.place ? `<span class="cv-org">${esc(org)}${org && e.place ? " · " : ""}${esc(e.place || "")}</span>` : ""}
             ${body ? '<span class="cv-toggle" aria-hidden="true"></span>' : ""}
@@ -335,25 +426,25 @@
     const interactive = `
       <div class="cv-grid">
         <div class="cv-main">
-          <h2 class="cv-h">${icon("cv", 20)}Experience</h2><ol class="cv-tl">${tl(exp, "exp")}</ol>
-          ${prj.length ? `<h2 class="cv-h">${icon("link", 20)}Projects</h2><ol class="cv-tl">${tl(prj, "prj")}</ol>` : ""}
-          <h2 class="cv-h">${icon("arch", 20)}Education</h2><ol class="cv-tl">${tl(edu, "edu")}</ol>
+          <h2 class="cv-h">${icon("cv", 20)}${t("experience")}</h2><ol class="cv-tl" lang="en">${tl(exp, "exp")}</ol>
+          ${prj.length ? `<h2 class="cv-h">${icon("link", 20)}${t("projects")}</h2><ol class="cv-tl" lang="en">${tl(prj, "prj")}</ol>` : ""}
+          <h2 class="cv-h">${icon("arch", 20)}${t("education")}</h2><ol class="cv-tl" lang="en">${tl(edu, "edu")}</ol>
         </div>
         <aside class="cv-side">
           <section class="cv-card glance">
-            <h3>At a glance</h3>
-            ${firstJob ? `<div><small>Now</small><strong>${esc(firstJob.role)}</strong><span>${esc(firstJob.org)}</span></div>` : ""}
-            ${(firstJob?.sections || []).filter((s) => s.heading).length ? `<div><small>Titles</small><span>${firstJob.sections.filter((s) => s.heading).map((s) => esc(s.heading)).join(" · ")}</span></div>` : ""}
-            ${edu[0] ? `<div><small>Education</small><span>${esc(edu[0].school)}</span></div>` : ""}
+            <h3>${t("glance")}</h3>
+            ${firstJob ? `<div><small>${t("now")}</small><strong>${esc(firstJob.role)}</strong><span>${esc(firstJob.org)}</span></div>` : ""}
+            ${(firstJob?.sections || []).filter((s) => s.heading).length ? `<div><small>${t("titles")}</small><span>${firstJob.sections.filter((s) => s.heading).map((s) => esc(s.heading)).join(" · ")}</span></div>` : ""}
+            ${edu[0] ? `<div><small>${t("education")}</small><span>${esc(edu[0].school)}</span></div>` : ""}
           </section>
           ${(r.skills || []).map((g) => `<section class="cv-card"><h3>${esc(g.group)}</h3><div class="skill-chips">${(g.items || []).map((s) => `<span>${esc(s)}</span>`).join("")}</div></section>`).join("")}
-          ${r.awards?.length ? `<section class="cv-card"><h3>Awards</h3>${r.awards.map((a) => `<div class="award"><strong>${esc(a.title)}</strong><small>${esc(a.date)}</small></div>`).join("")}</section>` : ""}
+          ${r.awards?.length ? `<section class="cv-card"><h3>${t("awards")}</h3>${r.awards.map((a) => `<div class="award"><strong>${esc(a.title)}</strong><small>${esc(a.date)}</small></div>`).join("")}</section>` : ""}
         </aside>
       </div>`;
 
     const pEntry = (title, org, dates, inner) => `<div class="p-entry"><div class="p-top"><strong>${esc(title)}</strong><span>${esc(dates)}</span></div>${org ? `<em>${esc(org)}</em>` : ""}${inner}</div>`;
     const paper = `
-      <article class="paper">
+      <article class="paper" lang="en">
         <header>
           <div><h1>${esc(p.name)}</h1><div class="p-role">${esc(p.title)}</div></div>
           <div class="p-contact">${[p.location, p.email, p.showPhone ? p.phone : "", ...socials().filter((s) => !s.url.startsWith("mailto:")).map((s) => s.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))].filter(Boolean).map(esc).join("<br/>")}</div>
@@ -371,25 +462,25 @@
       </article>`;
 
     return {
-      crumbs: [["Home", "#/"], ["Résumé"]],
+      crumbs: [[t("home"), "#/"], [t("resume")]],
       html: `
         <section class="cv">
           <header class="cv-hero">
             ${avatarHTML("cv-avatar")}
             <div class="cv-id">
               <h1>${esc(p.name)}</h1>
-              <p class="cv-role">${esc(p.title)}</p>
+              <p class="cv-role">${esc(L(p, "title"))}</p>
               <div class="contact-row">${contactChips()}</div>
             </div>
             <div class="cv-actions">
-              <div class="seg" role="tablist" aria-label="Résumé view">
-                <button role="tab" data-cv="interactive" class="${cvView === "interactive" ? "on" : ""}">Interactive</button>
-                <button role="tab" data-cv="document" class="${cvView === "document" ? "on" : ""}">Document</button>
+              <div class="seg" role="tablist" aria-label="${t("cvView")}">
+                <button role="tab" data-cv="interactive" class="${cvView === "interactive" ? "on" : ""}">${t("interactive")}</button>
+                <button role="tab" data-cv="document" class="${cvView === "document" ? "on" : ""}">${t("document")}</button>
               </div>
-              <button class="btn" id="cvPrint">${icon("cv", 16)}Download PDF</button>
+              <button class="btn" id="cvPrint">${icon("cv", 16)}${t("pdf")}</button>
             </div>
           </header>
-          ${r.summary ? `<p class="cv-summary">${esc(r.summary)}</p>` : ""}
+          ${r.summary ? `<p class="cv-summary" lang="en">${esc(r.summary)}</p>` : ""}
           <div class="cv-view cv-interactive" ${cvView === "document" ? "hidden" : ""}>${interactive}</div>
           <div class="cv-view cv-document" ${cvView === "interactive" ? "hidden" : ""}>${paper}</div>
         </section>`,
@@ -413,13 +504,13 @@
   function searchView(q) {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
     const hits = posts().filter((p) => {
-      const hay = [p.title, p.summary, p.category, p.body].join(" ").toLowerCase();
-      return terms.every((t) => hay.includes(t));
+      const hay = [p.title, p.summary, p.category, catName(p.category), p.body, p.title_zh, p.summary_zh, p.body_zh].join(" ").toLowerCase();
+      return terms.every((w) => hay.includes(w));
     });
     return {
-      crumbs: [["Home", "#/"], ["Search"]],
-      html: `<h1 class="page-title">Search <small>${hits.length} result${hits.length === 1 ? "" : "s"} for “${esc(q)}”</small></h1>
-        <div class="post-list">${hits.map(postCard).join("") || `<p class="empty">Nothing found. Try another keyword.</p>`}</div>`,
+      crumbs: [[t("home"), "#/"], [t("search")]],
+      html: `<h1 class="page-title">${t("search")} <small>${esc(t("results", hits.length, q))}</small></h1>
+        <div class="post-list">${hits.map(postCard).join("") || `<p class="empty">${t("noResults")}</p>`}</div>`,
     };
   }
 
@@ -478,7 +569,10 @@
   const toTop = $("#toTop");
   addEventListener("scroll", () => toTop.classList.toggle("show", scrollY > 600), { passive: true });
   toTop.onclick = () => scrollTo({ top: 0, behavior: "smooth" });
+  $$("#langSwitch [data-lang]").forEach((b) => (b.onclick = () => setLang(b.dataset.lang)));
+  applyLangChrome();
   addEventListener("hashchange", () => {
+    postLang = null;
     if ($("#searchInput").value) $("#searchInput").value = "";
     // in-page TOC anchors are handled separately; only route on real routes
     if (location.hash.startsWith("#/") || location.hash === "") route();

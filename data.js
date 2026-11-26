@@ -2,18 +2,29 @@ window.SITE = {
   "site": {
     "title": "Yuwen Fu",
     "description": "Senior Technical Artist — portfolio, resume and notes on my work and personal projects.",
-    "footer": "Senior Technical Artist · Montréal"
+    "footer": "Senior Technical Artist · Montréal",
+    "description_zh": "高级技术美术 —— 作品集、简历，以及工作和个人项目的记录。",
+    "footer_zh": "高级技术美术 · 蒙特利尔",
+    "categoryNames": {
+      "Work": "工作",
+      "Personal Projects": "个人项目",
+      "Software Engineering": "软件工程"
+    }
   },
   "profile": {
     "name": "Yuwen Fu",
     "title": "Senior Technical Artist",
+    "title_zh": "高级技术美术",
     "tagline": "Senior Technical Artist",
+    "tagline_zh": "高级技术美术",
     "avatar": "",
     "location": "Montréal, QC",
+    "location_zh": "加拿大 · 蒙特利尔",
     "email": "fuyuwendy@gmail.com",
     "phone": "514-885-6952",
     "showPhone": false,
     "about": "Hi, I'm **Yuwen** — a Technical Artist at **Ubisoft Montréal**, currently on **For Honor**.\n\nI sit between artists and engineers: I own the character pipeline from concept to final in-game validation, maintain the customization (MTX) expression system, review and optimize seasonal event maps, and build tools and scripts that make production smoother for the team.\n\nBefore that I validated and integrated character assets in Unity for **Roller Champions**, and worked as a software engineering intern on a PostgreSQL database system. I studied Computer Science (Computer Games) at **Concordia University** and 3D Advanced Computer Graphics at **TheStar College**.\n\nThis site collects my work, personal projects and technical notes.",
+    "about_zh": "你好，我是 **Yuwen**，目前在 **育碧蒙特利尔（Ubisoft Montréal）** 担任技术美术，参与 **《荣耀战魂》（For Honor）** 的开发。\n\n我的工作介于美术和程序之间：负责角色管线从概念到游戏内最终验收的全流程，维护商城内容（MTX）的自定义表现系统，为季节活动地图做技术审查和性能优化，并开发工具和脚本，让团队的生产流程更顺畅。\n\n在此之前，我在 **《Roller Champions》** 项目中负责角色资产在 Unity 中的验证与集成，也曾作为软件工程实习生参与 PostgreSQL 数据库系统的开发。我毕业于 **康考迪亚大学（Concordia University）** 计算机科学（游戏方向），并在 **TheStar College** 学习了 3D 高级计算机图形。\n\n这个网站收录了我的工作、个人项目和技术笔记。",
     "socials": [
       {
         "type": "artstation",

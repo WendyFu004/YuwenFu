@@ -64,17 +64,25 @@
       { key: "title", label: "Site title", hint: "Shown in the sidebar and browser tab." },
       { key: "description", label: "Description", type: "textarea" },
       { key: "footer", label: "Footer text", hint: "Markdown allowed." },
+      { type: "heading", label: "中文版本 · Chinese (optional)", hint: "Shown when a visitor picks 中文. Leave empty to show the English text." },
+      { key: "description_zh", label: "Description · 中文", type: "textarea" },
+      { key: "footer_zh", label: "Footer text · 中文" },
+      { key: "categoryNames", label: "Category names in Chinese · 分类中文名", type: "map", rows: 4, hint: "One per line: English name = 中文名, e.g. Work = 工作" },
     ],
     profile: [
       { key: "avatar", label: "Avatar / photo", type: "image", prefix: "avatar" },
       { key: "name", label: "Name" },
-      { key: "title", label: "Job title" },
-      { key: "tagline", label: "Tagline (sidebar)", type: "textarea", rows: 2 },
-      { key: "location", label: "Location" },
+      { key: "title", label: "Job title", half: true },
+      { key: "title_zh", label: "Job title · 中文", half: true },
+      { key: "tagline", label: "Tagline (sidebar)", type: "textarea", rows: 2, half: true },
+      { key: "tagline_zh", label: "Tagline · 中文", type: "textarea", rows: 2, half: true },
+      { key: "location", label: "Location", half: true },
+      { key: "location_zh", label: "Location · 中文", half: true },
       { key: "email", label: "Email" },
       { key: "phone", label: "Phone" },
       { key: "showPhone", label: "Show phone number publicly", type: "bool" },
       { key: "about", label: "About page", type: "md", rows: 12 },
+      { key: "about_zh", label: "About page · 中文 (optional)", type: "md", rows: 12, hint: "Shown when a visitor picks 中文. Leave empty to show the English version." },
       {
         key: "socials", label: "Social links", type: "list", itemLabel: (s) => s.label || s.type || "Link",
         blank: () => ({ type: "website", label: "Website", url: "" }),
@@ -150,6 +158,10 @@
       { key: "cover", label: "Cover image", type: "image", prefix: "cover" },
       { key: "summary", label: "Summary", type: "textarea", rows: 3, hint: "Shown on the home page card." },
       { key: "body", label: "Content", type: "md", rows: 20 },
+      { type: "heading", label: "中文版本 · Chinese version (optional)", hint: "Fill these in to give this post a Chinese version: visitors who pick 中文 see it, and the post gets an English / 中文 switch. Leave empty and Chinese visitors see the original with a short note. For a Chinese-only post, just write Chinese in the fields above." },
+      { key: "title_zh", label: "Title · 中文" },
+      { key: "summary_zh", label: "Summary · 中文", type: "textarea", rows: 3 },
+      { key: "body_zh", label: "Content · 中文", type: "md", rows: 20 },
     ],
   };
 
@@ -168,6 +180,23 @@
     const set = (v) => { obj[f.key] = v; onChange(f.key, v); };
 
     if (type === "list") return listField(f, obj, onChange, ctx);
+    if (type === "heading") {
+      el.innerHTML = `<h4 class="ed-section">${esc(f.label)}</h4>${hint}`;
+      return el;
+    }
+    if (type === "map") {
+      const v = Object.entries(obj[f.key] || {}).map(([k, x]) => `${k} = ${x}`).join("\n");
+      el.innerHTML = `<label><span class="ed-label">${esc(f.label)}</span><textarea rows="${f.rows || 4}">${esc(v)}</textarea></label>${hint}`;
+      $("textarea", el).addEventListener("input", (e) => {
+        const m = {};
+        e.target.value.split("\n").forEach((line) => {
+          const i = line.indexOf("=");
+          if (i > 0 && line.slice(0, i).trim() && line.slice(i + 1).trim()) m[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+        });
+        set(m);
+      });
+      return el;
+    }
     if (type === "bool") {
       el.innerHTML = `<label class="ed-check"><input type="checkbox" ${obj[f.key] ? "checked" : ""}/><span>${esc(f.label)}</span></label>${hint}`;
       $("input", el).onchange = (e) => set(e.target.checked);
@@ -309,7 +338,7 @@
       <span class="ed-sep"></span>
       <label class="ed-mdbtn" title="Upload image or GIF">🖼 Image<input type="file" accept="image/*" multiple hidden data-up="img"/></label>
       <label class="ed-mdbtn" title="Upload a short MP4/WebM clip">🎞 Clip<input type="file" accept="video/mp4,video/webm" hidden data-up="vid"/></label>
-      <button type="button" data-md="video" title="Embed YouTube / Vimeo">▶ Video link</button>
+      <button type="button" data-md="video" title="Embed Bilibili / YouTube / Vimeo">▶ Video link</button>
     </div>`;
   }
   function wireToolbar(el, ta, ctx) {
@@ -341,7 +370,7 @@
       if (k === "ul") linePrefix("- ");
       if (k === "quote") linePrefix("> ");
       if (k === "link") { const u = prompt("Link URL:", "https://"); if (u) wrapSel("[", `](${u})`, "link text"); }
-      if (k === "video") { const u = prompt("Paste a YouTube or Vimeo link:"); if (u) insertBlock(u.trim()); }
+      if (k === "video") { const u = prompt("Paste a Bilibili, YouTube or Vimeo link (Bilibili plays in mainland China; YouTube does not):"); if (u) insertBlock(u.trim()); }
     }));
     $$("[data-up]", el).forEach((inp) => (inp.onchange = async () => {
       for (const file of inp.files) {
@@ -378,7 +407,7 @@
           <button class="ed-icon" id="edFull" title="Full-width editor">⤢</button>
           <button class="ed-icon" id="edClose" title="Hide editor">⟩</button>
         </header>
-        <nav class="ed-tabs">${["posts:Posts", "profile:Profile", "resume:Résumé", "site:Site", "publish:Publish settings"].map((t) => { const [k, l] = t.split(":"); return `<button data-tab="${k}">${l}</button>`; }).join("")}</nav>
+        <nav class="ed-tabs">${["posts:Posts", "profile:Profile", "resume:Resume", "site:Site", "publish:Publish settings"].map((t) => { const [k, l] = t.split(":"); return `<button data-tab="${k}">${l}</button>`; }).join("")}</nav>
         <div class="ed-body" id="edBody"></div>
       </aside>
       <datalist id="ed-cats"></datalist>
@@ -467,7 +496,7 @@
     $("#ed-cats").innerHTML = [...new Set(data.posts.map((p) => p.category).filter(Boolean))].map((c) => `<option value="${esc(c)}">`).join("");
     if (currentTab === "posts") editingPost ? drawPost(editingPost) : drawPosts();
     if (currentTab === "profile") { body.appendChild(intro("Your name, photo, contact and the About page.")); body.appendChild(build(SCHEMA.profile, data.profile, () => changed())); go("#/about"); }
-    if (currentTab === "resume") { body.appendChild(intro("Everything on the Résumé page and the printable PDF.")); body.appendChild(build(SCHEMA.resume, data.resume, () => changed())); go("#/resume"); }
+    if (currentTab === "resume") { body.appendChild(intro("Everything on the Resume page and the printable PDF. Resume content is shown in English in both languages.")); body.appendChild(build(SCHEMA.resume, data.resume, () => changed())); go("#/resume"); }
     if (currentTab === "site") { body.appendChild(intro("Site-wide settings.")); body.appendChild(build(SCHEMA.site, data.site, () => changed())); drawDataTools(); }
     if (currentTab === "publish") drawPublishSettings();
     requestAnimationFrame(() => fitAll());
